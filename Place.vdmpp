@@ -1,0 +1,9 @@
+class Place
+	instance variables
+		id: nat;
+		label: set of char;
+	
+	operations
+		public Place: nat * set of char ==> Place
+		Place (newId, newLabel) == (id := newId; label := newLabel);
+end Place

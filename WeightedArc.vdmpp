@@ -1,0 +1,11 @@
+class WeightedArc
+	instance variables
+		source: Place;
+		target: Place;
+		weight: nat;
+	
+	operations
+		public WeightedArc: Place * Place * nat ==> WeightedArc
+		WeightedArc(src, tgt, wgt) == (source := src; target := tgt; weight := wgt; return self);
+		
+end WeightedArc

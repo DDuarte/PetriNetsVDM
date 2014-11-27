@@ -1,0 +1,18 @@
+class PetriNet
+	types		
+		public Transition ::
+			message: set of char;
+		
+		public WeightedArc ::
+			source : Place
+			target : Place;
+		
+	instance variables
+		places : set of Place;
+		starts : Place;
+		finish : set of Place;
+		arcs : set of WeightedArc;
+	inv starts in set places;
+	inv finish subset places;
+	
+end PetriNet
