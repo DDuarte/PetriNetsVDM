@@ -20,4 +20,9 @@ class PetriNet
 		public static addPlace(type: PlaceType) res: Place ==
 			(placeIdCounter := placeIdCounter + 1; return new Place(placeIdCounter, type))
 		
+		public static addArc(src: Place, tgt: Place, wgt: nat) res: WeightedArc ==
+			(return new WeightedArc(src, tgt, wgt))
+		pre src in places and tgt in places
+		
+	
 end PetriNet
