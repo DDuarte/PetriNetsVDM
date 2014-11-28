@@ -6,6 +6,8 @@ class WeightedArc
 	
 	operations
 		public WeightedArc: Place * Place * nat ==> WeightedArc
-		WeightedArc(src, tgt, wgt) == (source := src; target := tgt; weight := wgt; return self);
+		WeightedArc(src, tgt, wgt) == 
+			(source := src; target := tgt; weight := wgt; return self)
+		pre wgt > 0
 		
 end WeightedArc
