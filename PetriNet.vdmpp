@@ -12,6 +12,7 @@ class PetriNet
 		starts : Place;
 		finish : set of Place;
 		arcs : set of WeightedArc;
+		private static placeIdCounter: nat := 0
 	inv starts in set places;
 	inv finish subset places;
 	
