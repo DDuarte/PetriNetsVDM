@@ -16,4 +16,8 @@ class PetriNet
 	inv starts in set places;
 	inv finish subset places;
 	
+	operations
+		public static addPlace(type: PlaceType) res: Place ==
+			(placeIdCounter := placeIdCounter + 1; return new Place(placeIdCounter, type))
+		
 end PetriNet
