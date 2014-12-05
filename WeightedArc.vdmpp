@@ -1,13 +1,28 @@
-class WeightedArc
-    instance variables
-        source: Place;
-        target: Place;
-        weight: nat;
-    
+class Arc
+		instance variables
+        public place: Place;
+        public transition: Transition;
     operations
-        public WeightedArc: Place * Place * nat ==> WeightedArc
-        WeightedArc(src, tgt, wgt) == 
-            (source := src; target := tgt; weight := wgt; return self)
-        pre wgt > 0
-        
+    		protected Arc(p: Place, t: Transition) res : Arc ==
+						(place := p; transition := t; return self);
+end Arc
+
+class WeightedArc is subclass of Arc
+    instance variables
+        public weight: nat;
+    operations
+    		protected WeightedArc(p: Place, t: Transition, wght: nat) res: WeightedArc ==
+						(place := p; transition := t; weight := wght; return self);
 end WeightedArc
+
+class InputArc is subclass of WeightedArc
+		operations
+        public InputArc(source: Place, target: Transition, wght: nat) res: InputArc ==
+            (place := source; transition := target; weight := wght; return self);
+end InputArc
+
+class OutputArc is subclass of WeightedArc
+		operations
+        public OutputArc(source: Transition, target: Place, wght: nat) res: OutputArc ==
+            (transition := source; place := target; weight := wght; return self);
+end OutputArc

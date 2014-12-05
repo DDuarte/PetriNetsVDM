@@ -1,4 +1,4 @@
-class Place is subclass of Node
+class Place
     instance variables
         id: nat;
         label: set of char;
@@ -9,5 +9,5 @@ class Place is subclass of Node
         Place (newId, newLabel, newCapacity) == 
             (id := newId; label := newLabel; capacity := newCapacity; return self)
         pre newCapacity > 0
-        
+
 end Place

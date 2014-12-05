@@ -1,28 +1,34 @@
 class PetriNet
-    types        
-        public Transition ::
-            message: set of char;
-
-        public WeightedArc ::
-            source : Place
-            target : Place;
-
     instance variables
-        places : set of Place;
+        places : set of Place := {};
+        arcs : set of Arc := {};
+        transitions : set of Transition := {};
+        marking: map Place to nat := {|->};
         starts : Place;
-        finish : set of Place;
-        arcs : set of WeightedArc;
-        private static placeIdCounter: nat := 0
-    inv starts in set places;
-    inv finish subset places;
-    
+        finish : set of Place := {};
+        /*private static placeIdCounter: nat := 0;*/
+  	inv starts in set places;
+  	inv finish subset places;
+  	inv forall arc in set arcs & arc.place in set places and arc.transition in set transitions;
+
     operations
-        public static addPlace(type: PlaceType) res: Place ==
-            (placeIdCounter := placeIdCounter + 1; return new Place(placeIdCounter, type))
+        public PetriNet(p: set of Place, s: Place, f: set of Place, a: set of Arc, m: map Place to nat, t: set of Transition) res: PetriNet ==
+        		(places := p; starts := s; finish := f; arcs := a; marking := m; transitions := t; return self)
+    		pre dom m = p and
+    		 	s in set p and
+    		 	f subset p and
+    		 	forall a1 in set a & a1.place in set p and a1.transition in set t;
+
+			/*public addPlace(place: Place) ==
+            (places := {place} union places; marking := marking munion {place |-> 0})
+        pre not place in set places;
+
+        public addArc(arc: Arc) ==
+            arcs := {arc} union arcs;
+        pre not arc in set arcs;
         
-        public static addArc(src: Place, tgt: Place, wgt: nat) res: WeightedArc ==
-            (return new WeightedArc(src, tgt, wgt))
-        pre src in places and tgt in places
-        
+        public addTransition(transition: Transition) ==
+        		transition := {transition} union transitions;
+    		pre not transition in set transitions;*/
 
 end PetriNet
