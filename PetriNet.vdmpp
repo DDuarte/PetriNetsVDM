@@ -1,28 +1,28 @@
 class PetriNet
-	types		
-		public Transition ::
-			message: set of char;
-		
-		public WeightedArc ::
-			source : Place
-			target : Place;
-		
-	instance variables
-		places : set of Place;
-		starts : Place;
-		finish : set of Place;
-		arcs : set of WeightedArc;
-		private static placeIdCounter: nat := 0
-	inv starts in set places;
-	inv finish subset places;
-	
-	operations
-		public static addPlace(type: PlaceType) res: Place ==
-			(placeIdCounter := placeIdCounter + 1; return new Place(placeIdCounter, type))
-		
-		public static addArc(src: Place, tgt: Place, wgt: nat) res: WeightedArc ==
-			(return new WeightedArc(src, tgt, wgt))
-		pre src in places and tgt in places
-		
-	
+    types        
+        public Transition ::
+            message: set of char;
+
+        public WeightedArc ::
+            source : Place
+            target : Place;
+
+    instance variables
+        places : set of Place;
+        starts : Place;
+        finish : set of Place;
+        arcs : set of WeightedArc;
+        private static placeIdCounter: nat := 0
+    inv starts in set places;
+    inv finish subset places;
+    
+    operations
+        public static addPlace(type: PlaceType) res: Place ==
+            (placeIdCounter := placeIdCounter + 1; return new Place(placeIdCounter, type))
+        
+        public static addArc(src: Place, tgt: Place, wgt: nat) res: WeightedArc ==
+            (return new WeightedArc(src, tgt, wgt))
+        pre src in places and tgt in places
+        
+
 end PetriNet

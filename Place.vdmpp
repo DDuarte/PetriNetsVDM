@@ -1,13 +1,13 @@
 class Place is subclass of Node
-	instance variables
-		id: nat;
-		label: set of char;
-		capacity: nat;
-	
-	operations
-		public Place: nat * set of char * nat ==> Place
-		Place (newId, newLabel, newCapacity) == 
-			(id := newId; label := newLabel; capacity := newCapacity; return self)
-		pre newCapacity > 0
-		
+    instance variables
+        id: nat;
+        label: set of char;
+        capacity: nat;
+    
+    operations
+        public Place: nat * set of char * nat ==> Place
+        Place (newId, newLabel, newCapacity) == 
+            (id := newId; label := newLabel; capacity := newCapacity; return self)
+        pre newCapacity > 0
+        
 end Place
