@@ -5,6 +5,7 @@ class Arc
     operations
     		protected Arc(p: Place, t: Transition) res : Arc ==
 						(place := p; transition := t; return self);
+				public IsEnabled(marking: map Place to nat) res: bool == is subclass responsibility;
 end Arc
 
 class WeightedArc is subclass of Arc
@@ -19,6 +20,8 @@ class InputArc is subclass of WeightedArc
 		operations
         public InputArc(source: Place, target: Transition, wght: nat) res: InputArc ==
             (place := source; transition := target; weight := wght; return self);
+        public IsEnabled(marking: map Place to nat) res: bool ==
+        		(return marking(place) >= weight;)
 end InputArc
 
 class OutputArc is subclass of WeightedArc
@@ -26,3 +29,4 @@ class OutputArc is subclass of WeightedArc
         public OutputArc(source: Transition, target: Place, wght: nat) res: OutputArc ==
             (transition := source; place := target; weight := wght; return self);
 end OutputArc
+

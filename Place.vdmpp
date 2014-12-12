@@ -1,8 +1,8 @@
 class Place
     instance variables
-        id: nat;
-        label: set of char;
-        capacity: nat;
+        public id: nat;
+        public label: set of char;
+        public capacity: nat;
     
     operations
         public Place: nat * set of char * nat ==> Place

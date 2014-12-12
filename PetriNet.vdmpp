@@ -18,17 +18,40 @@ class PetriNet
     		 	s in set p and
     		 	f subset p and
     		 	forall a1 in set a & a1.place in set p and a1.transition in set t;
+    		 	
+  		 	public Trigger(t: Transition) res: () == (
+  		 			dcl inputArcs: set of InputArc;
+  		 			dcl outputArcs: set of OutputArc;
+  		 			dcl selectedOutputArcs: set of OutputArc;
+  		 			dcl inputArcsTokens: nat := 0;
+						
+						for all arc in set arcs do (
+							if arc.transition = t then (
+									if isofclass(InputArc, arc) and arc.IsEnabled(marking) then
+										inputArcs := inputArcs union {arc}
+									else if isofclass(OutputArc, arc) then
+										outputArcs := outputArcs union {arc}
+							)
+  		 			);
+  		 			
+  		 			if card inputArcs = 0 or card outputArcs = 0 then return;
 
-			/*public addPlace(place: Place) ==
-            (places := {place} union places; marking := marking munion {place |-> 0})
-        pre not place in set places;
-
-        public addArc(arc: Arc) ==
-            arcs := {arc} union arcs;
-        pre not arc in set arcs;
-        
-        public addTransition(transition: Transition) ==
-        		transition := {transition} union transitions;
-    		pre not transition in set transitions;*/
+  		 			for all inputArc in set inputArcs do (
+  		 				inputArcsTokens := inputArcsTokens + marking(inputArc.place)
+  		 			);
+  		 			
+  		 			for all outputArc in set outputArcs do (
+  		 				if outputArc.weight >= inputArcsTokens then
+  		 					selectedOutputArcs := selectedOutputArcs union {outputArc}
+  		 			);
+  		 			
+  		 			for all outputArc in set selectedOutputArcs do (
+  		 				marking(outputArc.place) := min(inputArcsTokens, outputArc.weight)
+  		 				/* TODO: update inputArc.place markings */
+  		 			);
+  		 			
+  		 			
+	 			)
+  		 	pre t in set transitions;
 
 end PetriNet

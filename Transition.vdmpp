@@ -1,3 +1,4 @@
 class Transition
-    
+    instance variables
+    		label: set of char;
 end Transition
