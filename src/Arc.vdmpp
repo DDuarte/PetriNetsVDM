@@ -54,7 +54,7 @@ class OutputArc is subclass of WeightedArc
     );
 
     public isEnabled: map Place to nat ==> bool
-    isEnabled(marking) == (
+    isEnabled(-) == (
       return true;
     );
 end OutputArc
