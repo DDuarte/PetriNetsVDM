@@ -29,9 +29,9 @@ class PetriNet
 
 	  public Trigger: Transition ==> ()
 		Trigger(t) == (
-			dcl inputArcs: set of InputArc;
-			dcl outputArcs: set of OutputArc;
-			dcl selectedOutputArcs: set of OutputArc;
+			dcl inputArcs: set of InputArc := {};
+			dcl outputArcs: set of OutputArc := {};
+			dcl selectedOutputArcs: set of OutputArc := {};
 			dcl inputArcsTokens: nat := 0;
 			
 			for all arc in set arcs do (
@@ -65,5 +65,15 @@ class PetriNet
 			);
 	  )
 	  pre t in set transitions;
+	  
+	  public GetMarking: () ==> map Place to nat
+	  GetMarking() == (
+	  	return marking;
+	  );
+	  
+	  public GetMarking: Place ==> nat
+	  GetMarking(p) == (
+	  	return marking(p);
+	  );
 
 end PetriNet

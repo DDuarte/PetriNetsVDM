@@ -4,6 +4,7 @@ class Tests
   	main() == (
   		IO`println("Running tests");
     	new TestPlace().testAll();
+    	new TestPetriNet().testAll();
     	IO`println("Tests finished");
   	);  
 end Tests

@@ -1,0 +1,76 @@
+class TestPetriNet is subclass of MyTestCase
+
+operations
+  public testElevator2Example: () ==> ()
+  testElevator2Example() == (
+  	dcl p1 : Place := new Place("ground floor", 1);
+  	dcl p2 : Place := new Place("1st floor", 1);
+  	dcl p3 : Place := new Place("2nd floor", 1);
+  	dcl p4 : Place := new Place("3rd floor", 1);
+  	dcl t1 : Transition := new Transition("A1");
+  	dcl t2 : Transition := new Transition("A2");
+  	dcl t3 : Transition := new Transition("A3");
+  	dcl t4 : Transition := new Transition("A4");
+  	dcl t5 : Transition := new Transition("A5");
+  	dcl t6 : Transition := new Transition("A6");
+  	dcl a1i : Arc := new InputArc(p1, t1, 1);
+  	dcl a1o : Arc := new OutputArc(t1, p2, 1);
+  	dcl a2i : Arc := new InputArc(p2, t2, 1);
+  	dcl a2o : Arc := new OutputArc(t2, p3, 1);
+  	dcl a3i : Arc := new InputArc(p3, t3, 1);
+  	dcl a3o : Arc := new OutputArc(t3, p4, 1);
+  	dcl a4i : Arc := new InputArc(p4, t4, 1);
+  	dcl a4o : Arc := new OutputArc(t4, p3, 1);
+  	dcl a5i : Arc := new InputArc(p3, t5, 1);
+  	dcl a5o : Arc := new OutputArc(t5, p2, 1);
+  	dcl a6i : Arc := new InputArc(p2, t6, 1);
+  	dcl a6o : Arc := new OutputArc(t6, p1, 1);
+
+	  dcl places : set of Place := { p1, p2, p3, p4 };
+	  dcl arcs : set of Arc := { a1i, a1o, a2i, a2o, a3i, a3o, a4i, a4o, a5i, a5o, a6i, a6o };
+	  dcl marking : map Place to nat := { p1 |-> 1, p2 |-> 0, p3 |-> 0, p4 |-> 0 };
+	  dcl transitions : set of Transition := { t1, t2, t3, t4, t5, t6 };
+
+	  dcl petriNet : PetriNet := new PetriNet(places, p1, {}, arcs, marking, transitions);
+
+	  assertEqual(1, petriNet.GetMarking(p1));
+	  assertEqual(0, petriNet.GetMarking(p2));
+	  assertEqual(0, petriNet.GetMarking(p3));
+	  assertEqual(0, petriNet.GetMarking(p4));
+
+	  petriNet.Trigger(t1); -- valid
+
+	  assertEqual(0, petriNet.GetMarking(p1));
+	  assertEqual(1, petriNet.GetMarking(p2));
+	  assertEqual(0, petriNet.GetMarking(p3));
+	  assertEqual(0, petriNet.GetMarking(p4));
+	  
+	  petriNet.Trigger(t2); -- valid
+
+	  assertEqual(0, petriNet.GetMarking(p1));
+	  assertEqual(0, petriNet.GetMarking(p2));
+	  assertEqual(1, petriNet.GetMarking(p3));
+	  assertEqual(0, petriNet.GetMarking(p4));
+	  
+	  petriNet.Trigger(t5); -- valid
+
+	  assertEqual(0, petriNet.GetMarking(p1));
+	  assertEqual(1, petriNet.GetMarking(p2));
+	  assertEqual(0, petriNet.GetMarking(p3));
+	  assertEqual(0, petriNet.GetMarking(p4));
+	  
+	  petriNet.Trigger(t1); -- not valid
+
+	  assertEqual(0, petriNet.GetMarking(p1));
+	  assertEqual(1, petriNet.GetMarking(p2));
+	  assertEqual(0, petriNet.GetMarking(p3));
+	  assertEqual(0, petriNet.GetMarking(p4));
+  );
+
+  -- Entry point that runs all tests with valid inputs
+  public testAll: () ==> ()
+  testAll() == (
+    testElevator2Example();
+  );  
+ 
+end TestPetriNet
