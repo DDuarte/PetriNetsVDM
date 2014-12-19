@@ -1,6 +1,32 @@
 class TestPetriNet is subclass of MyTestCase
 
 operations
+  public testElevator1Example: () ==> ()
+  testElevator1Example() == (
+    -- http://www.informatik.uni-hamburg.de/TGI/PetriNets/introductions/aalst/elevator1.swf
+    let p1 = new Place("P1", 3),
+     p2 = new Place("P2", 3),
+     t1 = new Transition("+1"),
+     t2 = new Transition("-1"),
+     a1i = new InputArc(p1, t1, 1),
+     a1o = new OutputArc(t1, p2, 1),
+     a2i = new InputArc(p2, t2, 1),
+     a2o = new OutputArc(t2, p1, 1),
+ 
+     places = { p1, p2 },
+     arcs = { a1i, a1o, a2i, a2o },
+     marking = { p1 |-> 3, p2 |-> 0 },
+     transitions = { t1, t2 },
+ 
+     petriNet = new PetriNet(places, p1, {}, arcs, marking, transitions) in (
+
+      assertEqual({ p1 |-> 3, p2 |-> 0 }, petriNet.marking);
+
+      petriNet.trigger(t1);
+      assertEqual({ p1 |-> 2, p2 |-> 1 }, petriNet.marking); -- test is failing, Idk why.
+    );
+  );
+
   public testElevator2Example: () ==> ()
   testElevator2Example() == (
     -- http://www.informatik.uni-hamburg.de/TGI/PetriNets/introductions/aalst/elevator2.swf
@@ -55,6 +81,7 @@ operations
   -- Entry point that runs all tests with valid inputs
   public testAll: () ==> ()
   testAll() == (
+    testElevator1Example();
     testElevator2Example();
   );
 
