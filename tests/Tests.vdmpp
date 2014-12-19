@@ -5,6 +5,7 @@ class Tests
       IO`println("Running tests");
       new TestPlace().testAll();
       new TestTransition().testAll();
+      new TestArc().testAll();
       new TestPetriNet().testAll();
       IO`println("Tests finished");
     );

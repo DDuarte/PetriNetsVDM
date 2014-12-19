@@ -1,0 +1,24 @@
+class TestArc is subclass of MyTestCase
+
+operations
+  public testConstructors: () ==> ()
+  testConstructors() == (
+    dcl p : Place := new Place();
+    dcl t : Transition := new Transition();
+    dcl ia : InputArc := new InputArc(p, t, 1);
+    dcl oa : OutputArc := new OutputArc(t, p, 2);
+    assertEqual(1, ia.weight);
+    assertEqual(2, oa.weight);
+    assertEqual(p, ia.place);
+    assertEqual(p, oa.place);
+    assertEqual(t, ia.transition);
+    assertEqual(t, oa.transition);
+  );
+
+  -- Entry point that runs all tests with valid inputs
+  public testAll: () ==> ()
+  testAll() == (
+    testConstructors();
+  );
+
+end TestArc
