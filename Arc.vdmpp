@@ -1,32 +1,55 @@
 class Arc
-		instance variables
-        public place: Place;
-        public transition: Transition;
-    operations
-    		protected Arc(p: Place, t: Transition) res : Arc ==
-						(place := p; transition := t; return self);
-				public IsEnabled(marking: map Place to nat) res: bool == is subclass responsibility;
+	instance variables
+		public place: Place;
+      public transition: Transition;
+  operations
+		protected Arc: Place * Transition ==> Arc
+		Arc(p, t) == (
+			place := p;
+			transition := t;
+			return self;
+		);
+
+		public IsEnabled: map Place to nat ==> bool
+		IsEnabled(marking) == is subclass responsibility;
 end Arc
 
 class WeightedArc is subclass of Arc
-    instance variables
-        public weight: nat;
-    operations
-    		protected WeightedArc(p: Place, t: Transition, wght: nat) res: WeightedArc ==
-						(place := p; transition := t; weight := wght; return self);
+  instance variables
+    public weight: nat;
+  operations
+		protected WeightedArc: Place * Transition * nat ==> WeightedArc
+		WeightedArc(p, t, wght) == (
+		  place := p;
+		  transition := t;
+		  weight := wght;
+		  return self
+		);
 end WeightedArc
 
 class InputArc is subclass of WeightedArc
-		operations
-        public InputArc(source: Place, target: Transition, wght: nat) res: InputArc ==
-            (place := source; transition := target; weight := wght; return self);
-        public IsEnabled(marking: map Place to nat) res: bool ==
-        		(return marking(place) >= weight;)
+	operations
+    public InputArc: Place * Transition * nat ==> InputArc
+    InputArc(source, target, wght) == (
+    	place := source;
+    	transition := target;
+    	weight := wght;
+    	return self;
+    );
+
+    public IsEnabled: map Place to nat ==> bool
+    IsEnabled(marking) == (
+    	return marking(place) >= weight;
+  	);
 end InputArc
 
 class OutputArc is subclass of WeightedArc
-		operations
-        public OutputArc(source: Transition, target: Place, wght: nat) res: OutputArc ==
-            (transition := source; place := target; weight := wght; return self);
+	operations
+    public OutputArc: Transition * Place * nat ==> OutputArc
+    OutputArc(source, target, wght) == (
+    	transition := source;
+    	place := target;
+    	weight := wght; return self
+  	);
 end OutputArc
 

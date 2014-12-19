@@ -1,4 +1,11 @@
 class Transition
-    instance variables
-    		label: set of char;
+  instance variables
+		label: set of char;
+
+	operations
+	  public Transition: set of char ==> Transition
+      Transition (newLabel) == (
+        label := newLabel;
+        return self;
+      );
 end Transition
