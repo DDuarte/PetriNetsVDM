@@ -1,11 +1,11 @@
 class Transition
   instance variables
-		label: seq of char;
+    public label: seq of char;
 
-	operations
-	  public Transition: seq of char ==> Transition
-      Transition (newLabel) == (
-        label := newLabel;
-        return self;
-      );
+  operations
+    public Transition: seq of char ==> Transition
+    Transition(newLabel) == (
+      label := newLabel;
+      return self;
+    );
 end Transition

@@ -1,24 +1,14 @@
 class Place
   instance variables
-    label: seq of char;
-    capacity: nat;
+    public label: seq of char;
+    public capacity: nat;
 
   operations
     public Place: seq of char * nat ==> Place
-    Place (newLabel, newCapacity) == (
+    Place(newLabel, newCapacity) == (
       label := newLabel;
       capacity := newCapacity;
       return self
     )
     pre newCapacity > 0;
-
-    public getLabel: () ==> seq of char
-    getLabel() == (
-    	return label;
-    );
-
-    public getCapacity: () ==> nat
-    getCapacity() == (
-    	return capacity;
-    );
 end Place
