@@ -1,10 +1,11 @@
 class Tests
   operations
-	  public static main: () ==> ()
-  	main() == (
-  		IO`println("Running tests");
-    	new TestPlace().testAll();
-    	new TestPetriNet().testAll();
-    	IO`println("Tests finished");
-  	);  
+    public static main: () ==> ()
+    main() == (
+      IO`println("Running tests");
+      new TestPlace().testAll();
+      new TestTransition().testAll();
+      new TestPetriNet().testAll();
+      IO`println("Tests finished");
+    );
 end Tests

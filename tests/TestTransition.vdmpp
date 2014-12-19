@@ -1,0 +1,16 @@
+class TestTransition is subclass of MyTestCase
+
+operations
+  public testConstructor: () ==> ()
+  testConstructor() == (
+    dcl t : Transition := new Transition("test1");
+    assertEqual("test1",  t.label);
+  );
+
+  -- Entry point that runs all tests with valid inputs
+  public testAll: () ==> ()
+  testAll() == (
+    testConstructor();
+  );
+
+end TestTransition
