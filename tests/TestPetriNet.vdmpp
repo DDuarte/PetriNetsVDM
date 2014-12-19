@@ -12,18 +12,30 @@ operations
      a1o = new OutputArc(t1, p2, 1),
      a2i = new InputArc(p2, t2, 1),
      a2o = new OutputArc(t2, p1, 1),
- 
+
      places = { p1, p2 },
      arcs = { a1i, a1o, a2i, a2o },
      marking = { p1 |-> 3, p2 |-> 0 },
      transitions = { t1, t2 },
- 
+
      petriNet = new PetriNet(places, p1, {}, arcs, marking, transitions) in (
 
       assertEqual({ p1 |-> 3, p2 |-> 0 }, petriNet.marking);
 
       petriNet.trigger(t1);
       assertEqual({ p1 |-> 2, p2 |-> 1 }, petriNet.marking); -- test is failing, Idk why.
+
+      petriNet.trigger(t1);
+      assertEqual({ p1 |-> 1, p2 |-> 2 }, petriNet.marking);
+
+      petriNet.trigger(t1);
+      assertEqual({ p1 |-> 0, p2 |-> 3 }, petriNet.marking);
+
+      petriNet.trigger(t2);
+      assertEqual({ p1 |-> 1, p2 |-> 2 }, petriNet.marking);
+
+      petriNet.trigger(t1);
+      assertEqual({ p1 |-> 0, p2 |-> 3 }, petriNet.marking);
     );
   );
 
@@ -52,12 +64,12 @@ operations
      a5o = new OutputArc(t5, p2, 1),
      a6i = new InputArc(p2, t6, 1),
      a6o = new OutputArc(t6, p1, 1),
- 
+
      places = { p1, p2, p3, p4 },
      arcs = { a1i, a1o, a2i, a2o, a3i, a3o, a4i, a4o, a5i, a5o, a6i, a6o },
      marking = { p1 |-> 1, p2 |-> 0, p3 |-> 0, p4 |-> 0 },
      transitions = { t1, t2, t3, t4, t5, t6 },
- 
+
      petriNet = new PetriNet(places, p1, {}, arcs, marking, transitions) in (
 
       assertEqual({ p1 |-> 1, p2 |-> 0, p3 |-> 0, p4 |-> 0 }, petriNet.marking);
