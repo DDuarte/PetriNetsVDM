@@ -58,3 +58,34 @@ class OutputArc is subclass of WeightedArc
       return true;
     );
 end OutputArc
+
+class ResetArc is subclass of Arc
+	operations
+		public ResetArc: Place * Transition ==> ResetArc
+		ResetArc(source, target) == (
+			place := source;
+			transition := target;
+			return self;
+		);
+		
+		public isEnabled: map Place to nat ==> bool
+		isEnabled(-) == (
+			return true;
+		);
+end ResetArc
+
+class InhibitorArc is subclass of Arc
+	operations
+		public InhibitorArc: Place * Transition ==> InhibitorArc
+		InhibitorArc(source, target) == (
+			place := source;
+			transition := target;
+		return self;
+		);
+		
+		public isEnabled: map Place to nat ==> bool
+		isEnabled(marking) == (
+			if marking(place) = 0 then return true
+			else return false;
+		);
+end InhibitorArc
