@@ -49,7 +49,7 @@ class PetriNet
       );
 
       for all outputArc in set outputArcs do (
-        if outputArc.weight >= inputArcsTokens then
+        if outputArc.weight <= inputArcsTokens then
           selectedOutputArcs := selectedOutputArcs union {outputArc}
       );
 
