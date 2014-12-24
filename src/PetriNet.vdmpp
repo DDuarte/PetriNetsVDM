@@ -121,18 +121,27 @@ class PetriNet
     	dcl currentInputMarking: map Place to nat := marking;
     	dcl currentOutputMarking: map Place to nat := marking;
     	dcl previousMarkings: set of map Place to nat := {};
+    	
     	stack.push(marking);
     	
     	while not stack.empty() do (
+    	
     		currentInputMarking := stack.pop();
+    		
     		for all transition in set transitions do (
+    		
     			currentOutputMarking := simulateTrigger(transition, currentInputMarking);
-    			if (currentOutputMarking = targetMarking) then return true;
     			
-    			if (currentOutputMarking not in set previousMarkings) then (stack.push(currentOutputMarking);
-    			previousMarkings := previousMarkings union {currentOutputMarking};
+    			-- if target marking is found
+    			if (currentOutputMarking = targetMarking) then return true; 
+    			
+    			-- if marking is not already explored
+    			if (currentOutputMarking not in set previousMarkings) then ( 
+    				stack.push(currentOutputMarking);
+    				previousMarkings := previousMarkings union {currentOutputMarking};
     			)
     		);
+    		
     	);
     	
     	return false;
