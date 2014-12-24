@@ -87,16 +87,16 @@ class PetriNet
     
     public isReachable: map Place to nat ==> bool
     isReachable(targetMarking) == (
-    	dcl stack: Stack := new Stack();
+    	dcl stack: DFSStack := new DFSStack();
     	dcl currentInputMarking: map Place to nat := marking;
     	dcl currentOutputMarking: map Place to nat := marking;
     	dcl previousMarkings: set of map Place to nat := {};
     	
-    	stack.push(marking);
+    	stack.push(new DFSElement(marking, new Transition("Start")));
     	
     	while not stack.empty() do (
     	
-    		currentInputMarking := stack.pop();
+    		currentInputMarking := stack.pop().marking;
     		
     		for all transition in set transitions do (
     		
@@ -107,7 +107,7 @@ class PetriNet
     			
     			-- if marking is not already explored
     			if (currentOutputMarking not in set previousMarkings) then ( 
-    				stack.push(currentOutputMarking);
+    				stack.push(new DFSElement(currentOutputMarking, transition));
     				previousMarkings := previousMarkings union {currentOutputMarking};
     			)
     		);
@@ -116,5 +116,42 @@ class PetriNet
     	
     	return false;
     );
-
+    
+    public getAllSequences: map Place to nat * map Place to nat ==> set of seq of Transition
+    getAllSequences(initialMarking, targetMarking) == (
+      dcl stack: DFSStack := new DFSStack();
+      dcl currentInputMarking: map Place to nat := initialMarking;
+      dcl currentOutputMarking: map Place to nat := initialMarking;
+      dcl previousMarkings: set of map Place to nat := {};
+      dcl transitionSeqs: set of seq of Transition := {};
+      dcl sequence: seq of Transition;
+      
+      stack.push(new DFSElement(initialMarking, new Transition("Start")));
+      
+      while not stack.empty() do (
+      
+        currentInputMarking := stack.pop().marking;
+        
+        for all transition in set transitions do (
+        
+          currentOutputMarking := trigger(transition, currentInputMarking);
+          
+          -- if target marking is found
+          if (currentOutputMarking = targetMarking) then (
+            sequence := stack.getReverseTransitionSequence();
+            transitionSeqs := transitionSeqs union {sequence};
+          ); 
+          
+          -- if marking is not already explored
+          if (currentOutputMarking not in set previousMarkings) then ( 
+            stack.push(new DFSElement(currentOutputMarking, transition));
+            previousMarkings := previousMarkings union {currentOutputMarking};
+          )
+        );
+        
+      );
+      
+      return transitionSeqs;
+    );
+    
 end PetriNet
