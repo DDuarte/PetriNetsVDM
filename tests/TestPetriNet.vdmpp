@@ -21,14 +21,14 @@ operations
      petriNet = new PetriNet(places, p1, {}, arcs, marking, transitions) in (
 
       assertEqual({ p1 |-> 3, p2 |-> 0 }, petriNet.marking);
-			
-			-- Test reachability of the markings before step execution
-			assertEqual(true , petriNet.isReachable({ p1 |-> 2, p2 |-> 1 }));
-			assertEqual(true , petriNet.isReachable({ p1 |-> 1, p2 |-> 2 }));
-			assertEqual(true , petriNet.isReachable({ p1 |-> 0, p2 |-> 3 }));
-			assertEqual(false , petriNet.isReachable({ p1 |-> 4, p2 |-> 5 }));
-			
-			-- Test stepwise execution of the petri net
+
+      -- Test reachability of the markings before step execution
+      assertEqual(true, petriNet.isReachable({ p1 |-> 2, p2 |-> 1 }));
+      assertEqual(true, petriNet.isReachable({ p1 |-> 1, p2 |-> 2 }));
+      assertEqual(true, petriNet.isReachable({ p1 |-> 0, p2 |-> 3 }));
+      assertEqual(false, petriNet.isReachable({ p1 |-> 4, p2 |-> 5 }));
+
+      -- Test stepwise execution of the petri net
       petriNet.executeStep(t1);
       assertEqual({ p1 |-> 2, p2 |-> 1 }, petriNet.marking);
 
@@ -79,14 +79,14 @@ operations
 
      petriNet = new PetriNet(places, p1, {}, arcs, marking, transitions) in (
 
-			-- Test reachability before stepwise execution
-			assertEqual(true , petriNet.isReachable({ p1 |-> 1, p2 |-> 0, p3 |-> 0, p4 |-> 0 }));
-			assertEqual(true , petriNet.isReachable({ p1 |-> 0, p2 |-> 1, p3 |-> 0, p4 |-> 0 }));
-			assertEqual(true , petriNet.isReachable({ p1 |-> 0, p2 |-> 1, p3 |-> 0, p4 |-> 0 }));
-			
+      -- Test reachability before stepwise execution
+      assertEqual(true, petriNet.isReachable({ p1 |-> 1, p2 |-> 0, p3 |-> 0, p4 |-> 0 }));
+      assertEqual(true, petriNet.isReachable({ p1 |-> 0, p2 |-> 1, p3 |-> 0, p4 |-> 0 }));
+      assertEqual(true, petriNet.isReachable({ p1 |-> 0, p2 |-> 1, p3 |-> 0, p4 |-> 0 }));
+
       assertEqual({ p1 |-> 1, p2 |-> 0, p3 |-> 0, p4 |-> 0 }, petriNet.marking);
 
-			-- Test stepwise execution of the petri net
+      -- Test stepwise execution of the petri net
       petriNet.executeStep(t1); -- valid
       assertEqual({ p1 |-> 0, p2 |-> 1, p3 |-> 0, p4 |-> 0 }, petriNet.marking);
 
@@ -103,7 +103,7 @@ operations
     );
   );
 
-public testElevator3Example: () ==> ()
+  public testElevator3Example: () ==> ()
   testElevator3Example() == (
     -- http://www.informatik.uni-hamburg.de/TGI/PetriNets/introductions/aalst/elevator3.swf
     let p1 = new Place("p1", 1),
@@ -134,16 +134,16 @@ public testElevator3Example: () ==> ()
 
      petriNet = new PetriNet(places, p1, {}, arcs, marking, transitions) in (
 
-			-- Test reachability before stepwise execution
-			assertEqual(true , petriNet.isReachable({ p1 |-> 1, p2 |-> 0, p3 |-> 0, p4 |-> 0, p5 |-> 0 }));
-			assertEqual(true , petriNet.isReachable({ p1 |-> 0, p2 |-> 1, p3 |-> 0, p4 |-> 0, p5 |-> 0 }));
-			assertEqual(true , petriNet.isReachable({ p1 |-> 0, p2 |-> 0, p3 |-> 1, p4 |-> 0, p5 |-> 0 }));
-			assertEqual(true , petriNet.isReachable({ p1 |-> 0, p2 |-> 0, p3 |-> 0, p4 |-> 1, p5 |-> 0 }));
-			assertEqual(true , petriNet.isReachable({ p1 |-> 0, p2 |-> 0, p3 |-> 0, p4 |-> 0, p5 |-> 1 }));
-			
+      -- Test reachability before stepwise execution
+      assertEqual(true, petriNet.isReachable({ p1 |-> 1, p2 |-> 0, p3 |-> 0, p4 |-> 0, p5 |-> 0 }));
+      assertEqual(true, petriNet.isReachable({ p1 |-> 0, p2 |-> 1, p3 |-> 0, p4 |-> 0, p5 |-> 0 }));
+      assertEqual(true, petriNet.isReachable({ p1 |-> 0, p2 |-> 0, p3 |-> 1, p4 |-> 0, p5 |-> 0 }));
+      assertEqual(true, petriNet.isReachable({ p1 |-> 0, p2 |-> 0, p3 |-> 0, p4 |-> 1, p5 |-> 0 }));
+      assertEqual(true, petriNet.isReachable({ p1 |-> 0, p2 |-> 0, p3 |-> 0, p4 |-> 0, p5 |-> 1 }));
+
       assertEqual({ p1 |-> 1, p2 |-> 0, p3 |-> 0, p4 |-> 0, p5 |-> 0 }, petriNet.marking);
 
-			-- Test stepwise execution of the petri net
+      -- Test stepwise execution of the petri net
       petriNet.executeStep(t1); -- valid
       assertEqual({ p1 |-> 0, p2 |-> 1, p3 |-> 0, p4 |-> 0, p5 |-> 0 }, petriNet.marking);
 
@@ -152,22 +152,61 @@ public testElevator3Example: () ==> ()
 
       petriNet.executeStep(t3); -- valid
       assertEqual({ p1 |-> 0, p2 |-> 0, p3 |-> 0, p4 |-> 1, p5 |-> 0 }, petriNet.marking);
-      
+
       petriNet.executeStep(t4); -- valid
       assertEqual({ p1 |-> 0, p2 |-> 0, p3 |-> 0, p4 |-> 0, p5 |-> 1 }, petriNet.marking);
-      
+
       petriNet.executeStep(t5); -- valid
       assertEqual({ p1 |-> 1, p2 |-> 0, p3 |-> 0, p4 |-> 0, p5 |-> 0 }, petriNet.marking);
 
     );
   );
-  
+
+  public testSimpleInhibitorArc: () ==> ()
+  testSimpleInhibitorArc() == (
+    -- http://www.techfak.uni-bielefeld.de/~mchen/BioPNML/Intro/pnfaq_files/image005.gif
+    let p1 = new Place("P1", 2),
+     p2 = new Place("P2", 1),
+     p3 = new Place("P3", 1),
+     p4 = new Place("P4", 3),
+     p5 = new Place("P5", 4),
+     t1 = new Transition("T1"),
+     ia1 = new InputArc(p1, t1, 2),
+     ia2 = new InhibitorArc(p2, t1),
+     oa1 = new OutputArc(t1, p3, 1),
+     oa2 = new OutputArc(t1, p4, 2),
+     oa3 = new OutputArc(t1, p5, 3),
+ 
+     places = { p1, p2, p3, p4, p5 },
+     arcs = { ia1, ia2, oa1, oa2, oa3 },
+     marking1 = { p1 |-> 2, p2 |-> 1, p3 |-> 0, p4 |-> 0, p5 |-> 0 },
+     marking2 = { p1 |-> 2, p2 |-> 0, p3 |-> 0, p4 |-> 0, p5 |-> 0 },
+     transitions = { t1 },
+ 
+     petriNet1 = new PetriNet(places, p1, {}, arcs, marking1, transitions),
+     petriNet2 = new PetriNet(places, p1, {}, arcs, marking2, transitions) in (
+
+      assertEqual({ p1 |-> 2, p2 |-> 1, p3 |-> 0, p4 |-> 0, p5 |-> 0 }, petriNet1.marking);
+      assertEqual({ p1 |-> 2, p2 |-> 0, p3 |-> 0, p4 |-> 0, p5 |-> 0 }, petriNet2.marking);
+
+      assertEqual(false, petriNet1.isReachable({ p1 |-> 0, p2 |-> 0, p3 |-> 1, p4 |-> 2, p5 |-> 3 }));
+      assertEqual(true,  petriNet2.isReachable({ p1 |-> 0, p2 |-> 0, p3 |-> 1, p4 |-> 2, p5 |-> 3 }));
+
+      petriNet1.executeStep(t1); -- should not trigger
+      petriNet2.executeStep(t1); -- should trigger
+
+      assertEqual({ p1 |-> 2, p2 |-> 1, p3 |-> 0, p4 |-> 0, p5 |-> 0 }, petriNet1.marking);
+      assertEqual({ p1 |-> 0, p2 |-> 0, p3 |-> 1, p4 |-> 2, p5 |-> 3 }, petriNet2.marking);
+    );
+  );
+
   -- Entry point that runs all tests with valid inputs
   public testAll: () ==> ()
   testAll() == (
     testElevator1Example();
     testElevator2Example();
     testElevator3Example();
+    testSimpleInhibitorArc();
   );
 
 end TestPetriNet
