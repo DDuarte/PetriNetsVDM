@@ -28,6 +28,8 @@ operations
 			assertEqual(true , petriNet.isReachable({ p1 |-> 0, p2 |-> 3 }));
 			assertEqual(true , petriNet.isReachable({ p1 |-> 0, p2 |-> 3 }));
 			
+			assertEqual(false , petriNet.isReachable({ p1 |-> 4, p2 |-> 5 }));
+			
       petriNet.executeStep(t1);
       assertEqual({ p1 |-> 2, p2 |-> 1 }, petriNet.marking);
 
