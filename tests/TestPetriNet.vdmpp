@@ -22,19 +22,19 @@ operations
 
       assertEqual({ p1 |-> 3, p2 |-> 0 }, petriNet.marking);
 
-      petriNet.trigger(t1);
+      petriNet.executeStep(t1);
       assertEqual({ p1 |-> 2, p2 |-> 1 }, petriNet.marking); -- test is failing, Idk why.
 
-      petriNet.trigger(t1);
+      petriNet.executeStep(t1);
       assertEqual({ p1 |-> 1, p2 |-> 2 }, petriNet.marking);
 
-      petriNet.trigger(t1);
+      petriNet.executeStep(t1);
       assertEqual({ p1 |-> 0, p2 |-> 3 }, petriNet.marking);
 
-      petriNet.trigger(t2);
+      petriNet.executeStep(t2);
       assertEqual({ p1 |-> 1, p2 |-> 2 }, petriNet.marking);
 
-      petriNet.trigger(t1);
+      petriNet.executeStep(t1);
       assertEqual({ p1 |-> 0, p2 |-> 3 }, petriNet.marking);
     );
   );
@@ -74,17 +74,17 @@ operations
 
       assertEqual({ p1 |-> 1, p2 |-> 0, p3 |-> 0, p4 |-> 0 }, petriNet.marking);
 
-      petriNet.trigger(t1); -- valid
+      petriNet.executeStep(t1); -- valid
       assertEqual({ p1 |-> 0, p2 |-> 1, p3 |-> 0, p4 |-> 0 }, petriNet.marking);
 
-      petriNet.trigger(t2); -- valid
+      petriNet.executeStep(t2); -- valid
       assertEqual({ p1 |-> 0, p2 |-> 0, p3 |-> 1, p4 |-> 0 }, petriNet.marking);
 
-      petriNet.trigger(t5); -- valid
+      petriNet.executeStep(t5); -- valid
       assertEqual({ p1 |-> 0, p2 |-> 1, p3 |-> 0, p4 |-> 0 }, petriNet.marking);
 
       let previousMarking = petriNet.marking in (
-        petriNet.trigger(t1); -- not valid, no marking change
+        petriNet.executeStep(t1); -- not valid, no marking change
         assertEqual(previousMarking, petriNet.marking);
       )
     );
