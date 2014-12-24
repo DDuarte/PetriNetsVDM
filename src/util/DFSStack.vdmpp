@@ -1,38 +1,38 @@
 class DFSStack
-	instance variables
-		stack: seq of DFSElement := [];
-	operations
-		public Reset: () ==> ()
-		Reset() ==
-			stack := [];
-		public pop: () ==> DFSElement
-		pop() ==
-			def res = hd stack in
-			(stack := tl stack;
-			return res)
-		pre stack <> [];
-		
-		public push: DFSElement ==> ()
-		push(element) == (
-			stack := [element] ^ stack;
-		);
-		
-		public empty: () ==> bool
-		empty() == (
-			return len stack = 0
-		);
-		
-		public getReverseTransitionSequence: () ==> seq of Transition
-		getReverseTransitionSequence() == (
-		  dcl reverseSequence: seq of DFSElement := reverse stack;
-		  dcl reverseTransitionSequence: seq of Transition := [];
-		  
-		  for dfsElement in reverseSequence do (
-		    reverseTransitionSequence := reverseTransitionSequence ^ [dfsElement.transition];
-		  );
-		  
-		  return reverseTransitionSequence;
-		);
+  instance variables
+    stack: seq of DFSElement := [];
+  operations
+    public Reset: () ==> ()
+    Reset() ==
+      stack := [];
+    public pop: () ==> DFSElement
+    pop() ==
+      def res = hd stack in
+      (stack := tl stack;
+      return res)
+    pre stack <> [];
+
+    public push: DFSElement ==> ()
+    push(element) == (
+      stack := [element] ^ stack;
+    );
+
+    public empty: () ==> bool
+    empty() == (
+      return len stack = 0
+    );
+
+    public getReverseTransitionSequence: () ==> seq of Transition
+    getReverseTransitionSequence() == (
+      dcl reverseSequence: seq of DFSElement := reverse stack;
+      dcl reverseTransitionSequence: seq of Transition := [];
+
+      for dfsElement in reverseSequence do (
+        reverseTransitionSequence := reverseTransitionSequence ^ [dfsElement.transition];
+      );
+
+      return reverseTransitionSequence;
+    );
 
 end DFSStack
 

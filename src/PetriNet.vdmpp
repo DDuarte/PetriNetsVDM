@@ -25,10 +25,10 @@ class PetriNet
       s in set p and
       f subset p and
       forall a1 in set a & a1.place in set p and a1.transition in set t;
-    
+
     private trigger: Transition * map Place to nat ==> map Place to nat
     trigger(t, inputMarking) == (
-    	dcl newMarking: map Place to nat := inputMarking;
+      dcl newMarking: map Place to nat := inputMarking;
       dcl inputArcs: set of InputArc := {};
       dcl outputArcs: set of OutputArc := {};
       dcl resetArcs: set of ResetArc := {};
@@ -38,28 +38,23 @@ class PetriNet
 
       for all arc in set arcs do (
         if arc.transition = t then (
-           if isofclass(InhibitorArc, arc) then
+          if isofclass(InhibitorArc, arc) then
             inhibitorArcs := inhibitorArcs union {arc}
-        	 else if isofclass(ResetArc, arc) and arc.isEnabled(inputMarking) then
-        	   resetArcs := resetArcs union {arc}
-           else if isofclass(InputArc, arc) and arc.isEnabled(inputMarking) then
-             inputArcs := inputArcs union {arc}
-           else if isofclass(OutputArc, arc) then
-             outputArcs := outputArcs union {arc}
+          else if isofclass(ResetArc, arc) and arc.isEnabled(inputMarking) then
+            resetArcs := resetArcs union {arc}
+          else if isofclass(InputArc, arc) and arc.isEnabled(inputMarking) then
+            inputArcs := inputArcs union {arc}
+          else if isofclass(OutputArc, arc) then
+            outputArcs := outputArcs union {arc}
         )
       );
-      
+
       for all inhibitorArc in set inhibitorArcs do (
         if not inhibitorArc.isEnabled(inputMarking) then return newMarking;
       );
-      
-      for all inputArc in set inputArcs do (
-        inputArcsTokens := inputArcsTokens + inputMarking(inputArc.place)
-      );
 
       for all outputArc in set outputArcs do (
-        if outputArc.weight <= inputArcsTokens then
-          selectedOutputArcs := selectedOutputArcs union {outputArc}
+        selectedOutputArcs := selectedOutputArcs union {outputArc}
       );
 
       -- update marking
@@ -75,48 +70,48 @@ class PetriNet
       for all outputArc in set selectedOutputArcs do (
         newMarking(outputArc.place) := newMarking(outputArc.place) + outputArc.weight;
       );
-      
-      return newMarking; 
+
+      return newMarking;
     )
     pre t in set transitions;
-    
+
     public executeStep: Transition ==> ()
     executeStep(t) == (
-    	marking := trigger(t, marking);
+      marking := trigger(t, marking);
     );
-    
+
     public isReachable: map Place to nat ==> bool
     isReachable(targetMarking) == (
-    	dcl stack: DFSStack := new DFSStack();
-    	dcl currentInputMarking: map Place to nat := marking;
-    	dcl currentOutputMarking: map Place to nat := marking;
-    	dcl previousMarkings: set of map Place to nat := {};
-    	
-    	stack.push(new DFSElement(marking, new Transition("Start")));
-    	
-    	while not stack.empty() do (
-    	
-    		currentInputMarking := stack.pop().marking;
-    		
-    		for all transition in set transitions do (
-    		
-    			currentOutputMarking := trigger(transition, currentInputMarking);
-    			
-    			-- if target marking is found
-    			if (currentOutputMarking = targetMarking) then return true; 
-    			
-    			-- if marking is not already explored
-    			if (currentOutputMarking not in set previousMarkings) then ( 
-    				stack.push(new DFSElement(currentOutputMarking, transition));
-    				previousMarkings := previousMarkings union {currentOutputMarking};
-    			)
-    		);
-    		
-    	);
-    	
-    	return false;
+      dcl stack: DFSStack := new DFSStack();
+      dcl currentInputMarking: map Place to nat := marking;
+      dcl currentOutputMarking: map Place to nat := marking;
+      dcl previousMarkings: set of map Place to nat := {};
+
+      stack.push(new DFSElement(marking, new Transition("Start")));
+
+      while not stack.empty() do (
+
+        currentInputMarking := stack.pop().marking;
+
+        for all transition in set transitions do (
+
+          currentOutputMarking := trigger(transition, currentInputMarking);
+
+          -- if target marking is found
+          if (currentOutputMarking = targetMarking) then return true;
+
+          -- if marking is not already explored
+          if (currentOutputMarking not in set previousMarkings) then (
+            stack.push(new DFSElement(currentOutputMarking, transition));
+            previousMarkings := previousMarkings union {currentOutputMarking};
+          )
+        );
+
+      );
+
+      return false;
     );
-    
+
     public getAllSequences: map Place to nat * map Place to nat ==> set of seq of Transition
     getAllSequences(initialMarking, targetMarking) == (
       dcl stack: DFSStack := new DFSStack();
@@ -125,33 +120,33 @@ class PetriNet
       dcl previousMarkings: set of map Place to nat := {};
       dcl transitionSeqs: set of seq of Transition := {};
       dcl sequence: seq of Transition;
-      
+
       stack.push(new DFSElement(initialMarking, new Transition("Start")));
-      
+
       while not stack.empty() do (
-      
+
         currentInputMarking := stack.pop().marking;
-        
+
         for all transition in set transitions do (
-        
+
           currentOutputMarking := trigger(transition, currentInputMarking);
-          
+
           -- if target marking is found
           if (currentOutputMarking = targetMarking) then (
             sequence := stack.getReverseTransitionSequence();
             transitionSeqs := transitionSeqs union {sequence};
-          ); 
-          
+          );
+
           -- if marking is not already explored
-          if (currentOutputMarking not in set previousMarkings) then ( 
+          if (currentOutputMarking not in set previousMarkings) then (
             stack.push(new DFSElement(currentOutputMarking, transition));
             previousMarkings := previousMarkings union {currentOutputMarking};
           )
         );
-        
+
       );
-      
+
       return transitionSeqs;
     );
-    
+
 end PetriNet
