@@ -33,8 +33,6 @@ class PetriNet
       dcl outputArcs: set of OutputArc := {};
       dcl resetArcs: set of ResetArc := {};
       dcl inhibitorArcs: set of InhibitorArc := {};
-      dcl selectedOutputArcs: set of OutputArc := {};
-      dcl inputArcsTokens: nat := 0;
 
       for all arc in set arcs do (
         if arc.transition = t then (
@@ -50,11 +48,8 @@ class PetriNet
       );
 
       for all inhibitorArc in set inhibitorArcs do (
-        if not inhibitorArc.isEnabled(inputMarking) then return newMarking;
-      );
-
-      for all outputArc in set outputArcs do (
-        selectedOutputArcs := selectedOutputArcs union {outputArc}
+        if not inhibitorArc.isEnabled(inputMarking) then
+          return newMarking;
       );
 
       -- update marking
@@ -67,7 +62,7 @@ class PetriNet
         newMarking(inputArc.place) := newMarking(inputArc.place) - inputArc.weight;
       );
 
-      for all outputArc in set selectedOutputArcs do (
+      for all outputArc in set outputArcs do (
         newMarking(outputArc.place) := newMarking(outputArc.place) + outputArc.weight;
       );
 
