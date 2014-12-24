@@ -2,8 +2,8 @@ class DFSStack
   instance variables
     stack: seq of DFSElement := [];
   operations
-    public Reset: () ==> ()
-    Reset() ==
+    public reset: () ==> ()
+    reset() ==
       stack := [];
     public pop: () ==> DFSElement
     pop() ==
