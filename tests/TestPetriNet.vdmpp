@@ -21,9 +21,15 @@ operations
      petriNet = new PetriNet(places, p1, {}, arcs, marking, transitions) in (
 
       assertEqual({ p1 |-> 3, p2 |-> 0 }, petriNet.marking);
-
+			
+			-- Check if all the following triggers will have the expected output
+			assertEqual(true , petriNet.isReachable({ p1 |-> 2, p2 |-> 1 }));
+			assertEqual(true , petriNet.isReachable({ p1 |-> 1, p2 |-> 2 }));
+			assertEqual(true , petriNet.isReachable({ p1 |-> 0, p2 |-> 3 }));
+			assertEqual(true , petriNet.isReachable({ p1 |-> 0, p2 |-> 3 }));
+			
       petriNet.executeStep(t1);
-      assertEqual({ p1 |-> 2, p2 |-> 1 }, petriNet.marking); -- test is failing, Idk why.
+      assertEqual({ p1 |-> 2, p2 |-> 1 }, petriNet.marking);
 
       petriNet.executeStep(t1);
       assertEqual({ p1 |-> 1, p2 |-> 2 }, petriNet.marking);

@@ -68,9 +68,74 @@ class PetriNet
     )
     pre t in set transitions;
     
+    private simulateTrigger: Transition * map Place to nat ==> map Place to nat
+    simulateTrigger(t, inputMarking) == (
+    	dcl newMarking: map Place to nat := inputMarking;
+      dcl inputArcs: set of InputArc := {};
+      dcl outputArcs: set of OutputArc := {};
+      dcl selectedOutputArcs: set of OutputArc := {};
+      dcl inputArcsTokens: nat := 0;
+
+      for all arc in set arcs do (
+        if arc.transition = t then (
+           if isofclass(InputArc, arc) and arc.isEnabled(inputMarking) then
+             inputArcs := inputArcs union {arc}
+           else if isofclass(OutputArc, arc) then
+             outputArcs := outputArcs union {arc}
+        )
+      );
+
+      if card inputArcs = 0 or card outputArcs = 0 then return newMarking;
+
+      for all inputArc in set inputArcs do (
+        inputArcsTokens := inputArcsTokens + inputMarking(inputArc.place)
+      );
+
+      for all outputArc in set outputArcs do (
+        if outputArc.weight <= inputArcsTokens then
+          selectedOutputArcs := selectedOutputArcs union {outputArc}
+      );
+
+      -- update marking
+
+      for all inputArc in set inputArcs do (
+        newMarking(inputArc.place) := newMarking(inputArc.place) - inputArc.weight;
+      );
+
+      for all outputArc in set selectedOutputArcs do (
+        newMarking(outputArc.place) := newMarking(outputArc.place) + outputArc.weight;
+      );
+      
+      return newMarking; 
+    )
+    pre t in set transitions;
+    
     public executeStep: Transition ==> ()
     executeStep(t) == (
     	marking := trigger(t);
+    );
+    
+    public isReachable: map Place to nat ==> bool
+    isReachable(targetMarking) == (
+    	dcl stack: Stack := new Stack();
+    	dcl currentInputMarking: map Place to nat := marking;
+    	dcl currentOutputMarking: map Place to nat := marking;
+    	dcl previousMarkings: set of map Place to nat := {};
+    	stack.push(marking);
+    	
+    	while not stack.empty() do (
+    		currentInputMarking := stack.pop();
+    		for all transition in set transitions do (
+    			currentOutputMarking := simulateTrigger(transition, currentInputMarking);
+    			if (currentOutputMarking = targetMarking) then return true;
+    			
+    			if (currentOutputMarking not in set previousMarkings) then (stack.push(currentOutputMarking);
+    			previousMarkings := previousMarkings union {currentOutputMarking};
+    			)
+    		);
+    	);
+    	
+    	return false;
     );
 
 end PetriNet

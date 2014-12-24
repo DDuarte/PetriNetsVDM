@@ -1,0 +1,26 @@
+class Stack
+	instance variables
+		stack: seq of map Place to nat := [];
+	operations
+		public Reset: () ==> ()
+		Reset() ==
+			stack := [];
+		public pop: () ==> map Place to nat
+		pop() ==
+			def res = hd stack in
+			(stack := tl stack;
+			return res)
+		pre stack <> [];
+		--post stack = [RESULT] ^ stack;
+		
+		public push: map Place to nat ==> ()
+		push(marking) == (
+			stack := [marking] ^ stack;
+		);
+		
+		public empty: () ==> bool
+		empty() == (
+			return len stack = 0
+		);
+
+end Stack
