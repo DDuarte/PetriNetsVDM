@@ -25,68 +25,34 @@ class PetriNet
       s in set p and
       f subset p and
       forall a1 in set a & a1.place in set p and a1.transition in set t;
-
-    private trigger: Transition ==> map Place to nat
-    trigger(t) == (
-    	dcl newMarking: map Place to nat := marking;
-      dcl inputArcs: set of InputArc := {};
-      dcl outputArcs: set of OutputArc := {};
-      dcl selectedOutputArcs: set of OutputArc := {};
-      dcl inputArcsTokens: nat := 0;
-
-      for all arc in set arcs do (
-        if arc.transition = t then (
-           if isofclass(InputArc, arc) and arc.isEnabled(marking) then
-             inputArcs := inputArcs union {arc}
-           else if isofclass(OutputArc, arc) then
-             outputArcs := outputArcs union {arc}
-        )
-      );
-
-      if card inputArcs = 0 or card outputArcs = 0 then return newMarking;
-
-      for all inputArc in set inputArcs do (
-        inputArcsTokens := inputArcsTokens + marking(inputArc.place)
-      );
-
-      for all outputArc in set outputArcs do (
-        if outputArc.weight <= inputArcsTokens then
-          selectedOutputArcs := selectedOutputArcs union {outputArc}
-      );
-
-      -- update marking
-
-      for all inputArc in set inputArcs do (
-        newMarking(inputArc.place) := newMarking(inputArc.place) - inputArc.weight;
-      );
-
-      for all outputArc in set selectedOutputArcs do (
-        newMarking(outputArc.place) := newMarking(outputArc.place) + outputArc.weight;
-      );
-      
-      return newMarking; 
-    )
-    pre t in set transitions;
     
-    private simulateTrigger: Transition * map Place to nat ==> map Place to nat
-    simulateTrigger(t, inputMarking) == (
+    private trigger: Transition * map Place to nat ==> map Place to nat
+    trigger(t, inputMarking) == (
     	dcl newMarking: map Place to nat := inputMarking;
       dcl inputArcs: set of InputArc := {};
       dcl outputArcs: set of OutputArc := {};
+      dcl resetArcs: set of ResetArc := {};
+      dcl inhibitorArcs: set of InhibitorArc := {};
       dcl selectedOutputArcs: set of OutputArc := {};
       dcl inputArcsTokens: nat := 0;
 
       for all arc in set arcs do (
         if arc.transition = t then (
-           if isofclass(InputArc, arc) and arc.isEnabled(inputMarking) then
+           if isofclass(InhibitorArc, arc) then
+            inhibitorArcs := inhibitorArcs union {arc}
+        	 else if isofclass(ResetArc, arc) and arc.isEnabled(inputMarking) then
+        	   resetArcs := resetArcs union {arc}
+           else if isofclass(InputArc, arc) and arc.isEnabled(inputMarking) then
              inputArcs := inputArcs union {arc}
            else if isofclass(OutputArc, arc) then
              outputArcs := outputArcs union {arc}
         )
       );
-
-      if card inputArcs = 0 or card outputArcs = 0 then return newMarking;
-
+      
+      for all inhibitorArc in set inhibitorArcs do (
+        if not inhibitorArc.isEnabled(inputMarking) then return newMarking;
+      );
+      
       for all inputArc in set inputArcs do (
         inputArcsTokens := inputArcsTokens + inputMarking(inputArc.place)
       );
@@ -97,6 +63,10 @@ class PetriNet
       );
 
       -- update marking
+
+      for all resetArc in set resetArcs do (
+        newMarking(resetArc.place) := 0;
+      );
 
       for all inputArc in set inputArcs do (
         newMarking(inputArc.place) := newMarking(inputArc.place) - inputArc.weight;
@@ -112,7 +82,7 @@ class PetriNet
     
     public executeStep: Transition ==> ()
     executeStep(t) == (
-    	marking := trigger(t);
+    	marking := trigger(t, marking);
     );
     
     public isReachable: map Place to nat ==> bool
@@ -130,7 +100,7 @@ class PetriNet
     		
     		for all transition in set transitions do (
     		
-    			currentOutputMarking := simulateTrigger(transition, currentInputMarking);
+    			currentOutputMarking := trigger(transition, currentInputMarking);
     			
     			-- if target marking is found
     			if (currentOutputMarking = targetMarking) then return true; 
