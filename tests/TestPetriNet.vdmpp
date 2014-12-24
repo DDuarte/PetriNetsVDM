@@ -22,14 +22,13 @@ operations
 
       assertEqual({ p1 |-> 3, p2 |-> 0 }, petriNet.marking);
 			
-			-- Check if all the following triggers will have the expected output
+			-- Test reachability of the markings before step execution
 			assertEqual(true , petriNet.isReachable({ p1 |-> 2, p2 |-> 1 }));
 			assertEqual(true , petriNet.isReachable({ p1 |-> 1, p2 |-> 2 }));
 			assertEqual(true , petriNet.isReachable({ p1 |-> 0, p2 |-> 3 }));
-			assertEqual(true , petriNet.isReachable({ p1 |-> 0, p2 |-> 3 }));
-			
 			assertEqual(false , petriNet.isReachable({ p1 |-> 4, p2 |-> 5 }));
 			
+			-- Test stepwise execution of the petri net
       petriNet.executeStep(t1);
       assertEqual({ p1 |-> 2, p2 |-> 1 }, petriNet.marking);
 
@@ -80,8 +79,14 @@ operations
 
      petriNet = new PetriNet(places, p1, {}, arcs, marking, transitions) in (
 
+			-- Test reachability before stepwise execution
+			assertEqual(true , petriNet.isReachable({ p1 |-> 1, p2 |-> 0, p3 |-> 0, p4 |-> 0 }));
+			assertEqual(true , petriNet.isReachable({ p1 |-> 0, p2 |-> 1, p3 |-> 0, p4 |-> 0 }));
+			assertEqual(true , petriNet.isReachable({ p1 |-> 0, p2 |-> 1, p3 |-> 0, p4 |-> 0 }));
+			
       assertEqual({ p1 |-> 1, p2 |-> 0, p3 |-> 0, p4 |-> 0 }, petriNet.marking);
 
+			-- Test stepwise execution of the petri net
       petriNet.executeStep(t1); -- valid
       assertEqual({ p1 |-> 0, p2 |-> 1, p3 |-> 0, p4 |-> 0 }, petriNet.marking);
 
