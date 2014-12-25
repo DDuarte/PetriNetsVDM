@@ -3,22 +3,25 @@ class TestArc is subclass of MyTestCase
 operations
   public testConstructors: () ==> ()
   testConstructors() == (
-    dcl p : Place := new Place();
-    dcl wia : WeightedInputArc := new WeightedInputArc(p, 1);
-    dcl ra : ResetArc := new ResetArc(p);
-    dcl ia : InhibitorArc := new InhibitorArc(p);
-    dcl woa : WeightedOutputArc := new WeightedOutputArc(p, 2);
-    assertEqual(1, wia.weight);
-    assertEqual(2, woa.weight);
-    assertEqual(p, wia.place);
-    assertEqual(p, woa.place);
-    assertEqual(p, ra.place);
-    assertEqual(p, ia.place);
+    IO`println("\t\t test constructor");
+    let p = new Place(),
+     wia = new WeightedInputArc(p, 1),
+     ra = new ResetArc(p),
+     ia = new InhibitorArc(p),
+     woa = new WeightedOutputArc(p, 2) in (
+      assertEqual(1, wia.weight);
+      assertEqual(2, woa.weight);
+      assertEqual(p, wia.place);
+      assertEqual(p, woa.place);
+      assertEqual(p, ra.place);
+      assertEqual(p, ia.place);
+    );
   );
 
   -- Entry point that runs all tests with valid inputs
   public testAll: () ==> ()
   testAll() == (
+    IO`println("\t arc tests");
     testConstructors();
   );
 

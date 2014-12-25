@@ -3,14 +3,17 @@ class TestPlace is subclass of MyTestCase
 operations
   public testConstructor: () ==> ()
   testConstructor() == (
-    dcl p : Place := new Place("test1", 1);
-    assertEqual("test1", p.label);
-    assertEqual(1,  p.capacity);
+    IO`println("\t\t test constructor");
+    let p = new Place("test1", 1) in (
+      assertEqual("test1", p.label);
+      assertEqual(1,  p.capacity);
+    );
   );
 
   -- Entry point that runs all tests with valid inputs
   public testAll: () ==> ()
   testAll() == (
+    IO`println("\t place tests");
     testConstructor();
   );
 

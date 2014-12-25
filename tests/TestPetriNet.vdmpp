@@ -4,6 +4,7 @@ operations
   public testElevator1Example: () ==> ()
   testElevator1Example() == (
     -- http://www.informatik.uni-hamburg.de/TGI/PetriNets/introductions/aalst/elevator1.swf
+    IO`println("\t\t test elevator 1");
     let p1 = new Place("P1", 3),
      p2 = new Place("P2", 3),
      a1i = new WeightedInputArc(p1, 1),
@@ -49,6 +50,7 @@ operations
   public testElevator2Example: () ==> ()
   testElevator2Example() == (
     -- http://www.informatik.uni-hamburg.de/TGI/PetriNets/introductions/aalst/elevator2.swf
+    IO`println("\t\t test elevator 2");
     let p1 = new Place("ground floor", 1),
      p2 = new Place("1st floor", 1),
      p3 = new Place("2nd floor", 1),
@@ -106,6 +108,7 @@ operations
   public testElevator3Example: () ==> ()
   testElevator3Example() == (
     -- http://www.informatik.uni-hamburg.de/TGI/PetriNets/introductions/aalst/elevator3.swf
+    IO`println("\t\t test elevator 3");
     let p1 = new Place("p1", 1),
      p2 = new Place("p2", 1),
      p3 = new Place("p3", 1),
@@ -165,6 +168,7 @@ operations
   public testSimpleInhibitorArc: () ==> ()
   testSimpleInhibitorArc() == (
     -- http://www.techfak.uni-bielefeld.de/~mchen/BioPNML/Intro/pnfaq_files/image005.gif
+    IO`println("\t\t test simple inhibitor arc");
     let p1 = new Place("P1", 2),
      p2 = new Place("P2", 1),
      p3 = new Place("P3", 1),
@@ -203,6 +207,7 @@ operations
   -- Entry point that runs all tests with valid inputs
   public testAll: () ==> ()
   testAll() == (
+    IO`println("\t petrinet tests");
     testElevator1Example();
     testElevator2Example();
     testElevator3Example();

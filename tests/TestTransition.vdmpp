@@ -3,18 +3,21 @@ class TestTransition is subclass of MyTestCase
 operations
   public testConstructor: () ==> ()
   testConstructor() == (
-    dcl p : Place := new Place();
-    dcl wia : WeightedInputArc := new WeightedInputArc(p, 1);
-    dcl woa : WeightedOutputArc := new WeightedOutputArc(p, 2);
-    dcl t : Transition := new Transition("test1", { wia }, { woa });
-    assertEqual("test1",  t.label);
-    assertEqual({ wia }, t.inputArcs);
-    assertEqual({ woa }, t.outputArcs);
+    IO`println("\t\t test constructor");
+    let p = new Place(),
+     wia = new WeightedInputArc(p, 1),
+     woa = new WeightedOutputArc(p, 2),
+     t = new Transition("test1", { wia }, { woa }) in (
+      assertEqual("test1",  t.label);
+      assertEqual({ wia }, t.inputArcs);
+      assertEqual({ woa }, t.outputArcs);
+    );
   );
 
   -- Entry point that runs all tests with valid inputs
   public testAll: () ==> ()
   testAll() == (
+    IO`println("\t transition tests");
     testConstructor();
   );
 
