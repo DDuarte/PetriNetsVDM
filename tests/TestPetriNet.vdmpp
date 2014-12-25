@@ -29,6 +29,9 @@ operations
       assertEqual(true, petriNet.isReachable({ p1 |-> 0, p2 |-> 3 }));
       assertEqual(false, petriNet.isReachable({ p1 |-> 4, p2 |-> 5 }));
 
+      assertEqual({}, petriNet.getAllSequences({ p1 |-> 3, p2 |-> 0 }, { p1 |-> 4, p2 |-> 5 }));
+      assertEqual(nil /* FIX ME */, petriNet.getAllSequences({ p1 |-> 3, p2 |-> 0 }, { p1 |-> 0, p2 |-> 3 }));
+
       -- Test stepwise execution of the petri net
       petriNet.executeStep(t1);
       assertEqual({ p1 |-> 2, p2 |-> 1 }, petriNet.marking);
