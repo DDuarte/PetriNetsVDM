@@ -180,13 +180,13 @@ operations
      oa2 = new WeightedOutputArc(p4, 2),
      oa3 = new WeightedOutputArc(p5, 3),
      t1 = new Transition("T1", { ia1, ia2 }, { oa1, oa2, oa3 }),
- 
+
      places = { p1, p2, p3, p4, p5 },
      arcs = { ia1, ia2, oa1, oa2, oa3 },
      marking1 = { p1 |-> 2, p2 |-> 1, p3 |-> 0, p4 |-> 0, p5 |-> 0 },
      marking2 = { p1 |-> 2, p2 |-> 0, p3 |-> 0, p4 |-> 0, p5 |-> 0 },
      transitions = { t1 },
- 
+
      petriNet1 = new PetriNet(places, p1, {}, arcs, marking1, transitions),
      petriNet2 = new PetriNet(places, p1, {}, arcs, marking2, transitions) in (
 
@@ -204,6 +204,84 @@ operations
     );
   );
 
+  public testSimpleResetArc: () ==> ()
+  testSimpleResetArc() == (
+    -- http://www.techfak.uni-bielefeld.de/~mchen/BioPNML/Intro/pnfaq_files/image003.gif (modified)
+    IO`println("\t\t test simple reset arc");
+    let p1 = new Place("P1", 2),
+     p2 = new Place("P2", 1),
+     p3 = new Place("P3", 1),
+     p4 = new Place("P4", 3),
+     p5 = new Place("P5", 4),
+     ia1 = new WeightedInputArc(p1,  2),
+     ia2 = new ResetArc(p2),
+     oa1 = new WeightedOutputArc(p3, 1),
+     oa2 = new WeightedOutputArc(p4, 2),
+     oa3 = new WeightedOutputArc(p5, 3),
+     t1 = new Transition("T1", { ia1, ia2 }, { oa1, oa2, oa3 }),
+
+     places = { p1, p2, p3, p4, p5 },
+     arcs = { ia1, ia2, oa1, oa2, oa3 },
+     marking1 = { p1 |-> 2, p2 |-> 5, p3 |-> 0, p4 |-> 0, p5 |-> 0 },
+     marking2 = { p1 |-> 2, p2 |-> 0, p3 |-> 0, p4 |-> 0, p5 |-> 0 },
+     transitions = { t1 },
+
+     petriNet1 = new PetriNet(places, p1, {}, arcs, marking1, transitions),
+     petriNet2 = new PetriNet(places, p1, {}, arcs, marking2, transitions) in (
+
+      assertEqual({ p1 |-> 2, p2 |-> 5, p3 |-> 0, p4 |-> 0, p5 |-> 0 }, petriNet1.marking);
+      assertEqual({ p1 |-> 2, p2 |-> 0, p3 |-> 0, p4 |-> 0, p5 |-> 0 }, petriNet2.marking);
+
+      assertEqual(true, petriNet1.isReachable({ p1 |-> 0, p2 |-> 0, p3 |-> 1, p4 |-> 2, p5 |-> 3 }));
+      assertEqual(true, petriNet2.isReachable({ p1 |-> 0, p2 |-> 0, p3 |-> 1, p4 |-> 2, p5 |-> 3 }));
+
+      petriNet1.executeStep(t1); -- should trigger
+      petriNet2.executeStep(t1); -- should trigger
+
+      assertEqual({ p1 |-> 0, p2 |-> 0, p3 |-> 1, p4 |-> 2, p5 |-> 3 }, petriNet1.marking);
+      assertEqual({ p1 |-> 0, p2 |-> 0, p3 |-> 1, p4 |-> 2, p5 |-> 3 }, petriNet2.marking);
+    );
+  );
+
+  public testSimpleCapacityArc: () ==> ()
+  testSimpleCapacityArc() == (
+    -- http://www.techfak.uni-bielefeld.de/~mchen/BioPNML/Intro/pnfaq_files/image003.gif (modified)
+    IO`println("\t\t test simple capacity arc");
+    let p1 = new Place("P1", 2),
+     p2 = new Place("P2", 1),
+     p3 = new Place("P3", 1),
+     p4 = new Place("P4", 2),
+     p5 = new Place("P5", 3),
+     ia1 = new WeightedInputArc(p1,  2),
+     ia2 = new WeightedInputArc(p2,  1),
+     oa1 = new WeightedOutputArc(p3, 1),
+     oa2 = new WeightedOutputArc(p4, 2),
+     oa3 = new WeightedOutputArc(p5, 3),
+     t1 = new Transition("T1", { ia1, ia2 }, { oa1, oa2, oa3 }),
+
+     places = { p1, p2, p3, p4, p5 },
+     arcs = { ia1, ia2, oa1, oa2, oa3 },
+     marking1 = { p1 |-> 2, p2 |-> 1, p3 |-> 0, p4 |-> 0, p5 |-> 3 },
+     marking2 = { p1 |-> 2, p2 |-> 1, p3 |-> 0, p4 |-> 0, p5 |-> 0 },
+     transitions = { t1 },
+
+     petriNet1 = new PetriNet(places, p1, {}, arcs, marking1, transitions),
+     petriNet2 = new PetriNet(places, p1, {}, arcs, marking2, transitions) in (
+
+      assertEqual({ p1 |-> 2, p2 |-> 1, p3 |-> 0, p4 |-> 0, p5 |-> 3 }, petriNet1.marking);
+      assertEqual({ p1 |-> 2, p2 |-> 1, p3 |-> 0, p4 |-> 0, p5 |-> 0 }, petriNet2.marking);
+
+      assertEqual(false, petriNet1.isReachable({ p1 |-> 0, p2 |-> 0, p3 |-> 1, p4 |-> 2, p5 |-> 3 }));
+      assertEqual(true,  petriNet2.isReachable({ p1 |-> 0, p2 |-> 0, p3 |-> 1, p4 |-> 2, p5 |-> 3 }));
+
+      petriNet1.executeStep(t1); -- should not trigger
+      petriNet2.executeStep(t1); -- should trigger
+
+      assertEqual({ p1 |-> 2, p2 |-> 1, p3 |-> 0, p4 |-> 0, p5 |-> 3 }, petriNet1.marking);
+      assertEqual({ p1 |-> 0, p2 |-> 0, p3 |-> 1, p4 |-> 2, p5 |-> 3 }, petriNet2.marking);
+    );
+  );
+
   -- Entry point that runs all tests with valid inputs
   public testAll: () ==> ()
   testAll() == (
@@ -212,6 +290,8 @@ operations
     testElevator2Example();
     testElevator3Example();
     testSimpleInhibitorArc();
+    testSimpleResetArc();
+    testSimpleCapacityArc();
   );
 
 end TestPetriNet

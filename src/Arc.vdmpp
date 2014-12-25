@@ -4,7 +4,7 @@ class Arc
   operations
     public isEnabled: map Place to nat ==> bool
     isEnabled(marking) == is subclass responsibility;
-  
+
     public trigger: Transition * map Place to nat ==> map Place to nat
     trigger(t, m) == is subclass responsibility;
 end Arc
@@ -27,7 +27,7 @@ class ResetArc is subclass of InputArc
     isEnabled(-) == (
       return true;
     );
-    
+
     public trigger: Transition * map Place to nat ==> map Place to nat
     trigger(-, m) == (
       dcl newMarking: map Place to nat := m;
