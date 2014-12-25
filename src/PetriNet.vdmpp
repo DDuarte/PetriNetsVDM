@@ -8,10 +8,15 @@ class PetriNet
     public finish : set of Place := {};
     inv starts in set places;
     inv finish subset places;
-    -- inv forall arc in set arcs & arc.place in set places and arc.transition in set transitions;
+    inv forall arc in set arcs & arc.place in set places;
+    inv forall transition in set transitions & (
+     forall arc in set transition.inputArcs & arc in set arcs and
+     forall arc2 in set transition.outputArcs & arc2 in set arcs
+    );
 
   operations
-    public PetriNet: set of Place * Place * set of Place * set of Arc * map Place to nat * set of Transition ==> PetriNet
+    public PetriNet: set of Place * Place * set of Place * set of Arc *
+                     map Place to nat * set of Transition ==> PetriNet
     PetriNet(p, s, f, a, m, t) == (
       places := p;
       starts := s;
@@ -23,8 +28,12 @@ class PetriNet
     )
     pre dom m = p and
       s in set p and
-      f subset p;
-      -- forall a1 in set a & a1.place in set p and a1.transition in set t;
+      f subset p and
+      forall a1 in set a & a1.place in set p and
+      forall t1 in set t & (
+       forall a2 in set t1.inputArcs & a2 in set a and
+       forall a3 in set t1.outputArcs & a3 in set a
+      );
 
     private trigger: Transition * map Place to nat ==> map Place to nat
     trigger(t, m) == (
@@ -43,13 +52,15 @@ class PetriNet
       );
 
       return newMarking;
-    );
-    -- pre t in set transitions;
+    )
+    pre t in set transitions and dom m subset places
+    post dom RESULT subset places;
 
     public executeStep: Transition ==> ()
     executeStep(t) == (
       marking := trigger(t, marking);
-    );
+    )
+    pre t in set transitions;
 
     public isReachable: map Place to nat ==> bool
     isReachable(targetMarking) == (
@@ -58,7 +69,7 @@ class PetriNet
       dcl currentOutputMarking: map Place to nat := marking;
       dcl previousMarkings: set of map Place to nat := {};
 
-      stack.push(new DFSElement(marking, new Transition("Start", { }, { }))); -- FIX ME
+      stack.push(new DFSElement(marking, new Transition("Start", { }, { })));
 
       while not stack.empty() do (
 
@@ -81,7 +92,8 @@ class PetriNet
       );
 
       return false;
-    );
+    )
+    pre dom targetMarking subset places;
 
     public getAllSequences: map Place to nat * map Place to nat ==> set of seq of Transition
     getAllSequences(initialMarking, targetMarking) == (
@@ -118,6 +130,7 @@ class PetriNet
       );
 
       return transitionSeqs;
-    );
+    )
+    pre dom initialMarking subset places and dom targetMarking subset places;
 
 end PetriNet
