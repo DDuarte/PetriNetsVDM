@@ -4,7 +4,7 @@ operations
   public testConstructor: () ==> ()
   testConstructor() == (
     dcl p : Place := new Place("test1", 1);
-    assertEqual("test1",  p.label);
+    assertEqual("test1", p.label);
     assertEqual(1,  p.capacity);
   );
 

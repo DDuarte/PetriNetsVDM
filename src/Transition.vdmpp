@@ -1,11 +1,15 @@
 class Transition
   instance variables
     public label: seq of char;
+    public inputArcs: set of InputArc;
+    public outputArcs: set of OutputArc;
 
   operations
-    public Transition: seq of char ==> Transition
-    Transition(newLabel) == (
+    public Transition: seq of char * set of InputArc * set of OutputArc ==> Transition
+    Transition(newLabel, ia, oa) == (
       label := newLabel;
+      inputArcs := ia;
+      outputArcs := oa;
       return self;
     );
 end Transition

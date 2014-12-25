@@ -4,15 +4,16 @@ operations
   public testConstructors: () ==> ()
   testConstructors() == (
     dcl p : Place := new Place();
-    dcl t : Transition := new Transition();
-    dcl ia : InputArc := new InputArc(p, t, 1);
-    dcl oa : OutputArc := new OutputArc(t, p, 2);
-    assertEqual(1, ia.weight);
-    assertEqual(2, oa.weight);
+    dcl wia : WeightedInputArc := new WeightedInputArc(p, 1);
+    dcl ra : ResetArc := new ResetArc(p);
+    dcl ia : InhibitorArc := new InhibitorArc(p);
+    dcl woa : WeightedOutputArc := new WeightedOutputArc(p, 2);
+    assertEqual(1, wia.weight);
+    assertEqual(2, woa.weight);
+    assertEqual(p, wia.place);
+    assertEqual(p, woa.place);
+    assertEqual(p, ra.place);
     assertEqual(p, ia.place);
-    assertEqual(p, oa.place);
-    assertEqual(t, ia.transition);
-    assertEqual(t, oa.transition);
   );
 
   -- Entry point that runs all tests with valid inputs
