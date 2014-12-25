@@ -1,6 +1,12 @@
 class Arc
   instance variables
     public place: Place
+  operations
+    public isEnabled: map Place to nat ==> bool
+    isEnabled(marking) == is subclass responsibility;
+  
+    public trigger: Transition * map Place to nat ==> map Place to nat
+    trigger(t, m) == is subclass responsibility;
 end Arc
 
 class InputArc is subclass of Arc
@@ -21,6 +27,13 @@ class ResetArc is subclass of InputArc
     isEnabled(-) == (
       return true;
     );
+    
+    public trigger: Transition * map Place to nat ==> map Place to nat
+    trigger(-, m) == (
+      dcl newMarking: map Place to nat := m;
+      newMarking(place) := 0;
+      return newMarking;
+    );
 end ResetArc
 
 class InhibitorArc is subclass of InputArc
@@ -38,6 +51,11 @@ class InhibitorArc is subclass of InputArc
       else
         return false;
     );
+
+    public trigger: Transition * map Place to nat ==> map Place to nat
+    trigger(-, m) == (
+      return m;
+    );
 end InhibitorArc
 
 class WeightedInputArc is subclass of InputArc
@@ -54,6 +72,13 @@ class WeightedInputArc is subclass of InputArc
     public isEnabled: map Place to nat ==> bool
     isEnabled(marking) == (
       return marking(place) >= weight;
+    );
+
+    public trigger: Transition * map Place to nat ==> map Place to nat
+    trigger(-, m) == (
+      dcl newMarking: map Place to nat := m;
+      newMarking(place) := newMarking(place) - weight;
+      return newMarking;
     );
 end WeightedInputArc
 
@@ -75,5 +100,12 @@ class WeightedOutputArc is subclass of OutputArc
     public isEnabled: map Place to nat ==> bool
     isEnabled(-) == (
       return true;
+    );
+
+    public trigger: Transition * map Place to nat ==> map Place to nat
+    trigger(-, m) == (
+      dcl newMarking: map Place to nat := m;
+      newMarking(place) := newMarking(place) + weight;
+      return newMarking;
     );
 end WeightedOutputArc
