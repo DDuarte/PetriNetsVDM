@@ -1,21 +1,26 @@
 class Arc
+  /* Abstract class to represent arcs between transitions and places */
   instance variables
+    -- place origin or destination of this arc
     public place: Place
   operations
+    -- returns true if the arc meets all requirements for an 'event' to happen
     public isEnabled: map Place to nat ==> bool
     isEnabled(marking) == is subclass responsibility;
 
+    -- modifies the marking at the place of the arc
     public trigger: Transition * map Place to nat ==> map Place to nat
     trigger(t, m) == is subclass responsibility;
+    -- pre isEnabled(m);
+
 end Arc
 
 class InputArc is subclass of Arc
-  operations
-    public isEnabled: map Place to nat ==> bool
-    isEnabled(marking) == is subclass responsibility;
+  /* Abstract class for all input arcs: arcs from a place to a transition */
 end InputArc
 
 class ResetArc is subclass of InputArc
+  /* Input arc that consumes all tokens at its place */
   operations
     public ResetArc: Place ==> ResetArc
     ResetArc(p) == (
@@ -23,20 +28,25 @@ class ResetArc is subclass of InputArc
       return self;
     );
 
+    -- reset arcs are always enabled
     public isEnabled: map Place to nat ==> bool
     isEnabled(-) == (
       return true;
     );
 
+    -- reset arcs consume all the tokens at the place
     public trigger: Transition * map Place to nat ==> map Place to nat
     trigger(-, m) == (
       dcl newMarking: map Place to nat := m;
       newMarking(place) := 0;
       return newMarking;
     );
+    -- pre isEnabled(m);
+
 end ResetArc
 
 class InhibitorArc is subclass of InputArc
+  /* Input arc that is enabled if its place has no tokens */
   operations
     public InhibitorArc: Place ==> InhibitorArc
     InhibitorArc(p) == (
@@ -44,6 +54,7 @@ class InhibitorArc is subclass of InputArc
       return self;
     );
 
+    -- inhibitor arcs are enabled if their place is empty
     public isEnabled: map Place to nat ==> bool
     isEnabled(marking) == (
       if marking(place) = 0 then
@@ -52,14 +63,19 @@ class InhibitorArc is subclass of InputArc
         return false;
     );
 
+    -- inhibitor arcs do not change marking
     public trigger: Transition * map Place to nat ==> map Place to nat
     trigger(-, m) == (
       return m;
     );
+    -- pre isEnabled(m);
+
 end InhibitorArc
 
 class WeightedInputArc is subclass of InputArc
+  /* Input arc with weight */
   instance variables
+    -- amount of tokens that can 'travel' this arc
     public weight: nat;
   operations
     public WeightedInputArc: Place * nat ==> WeightedInputArc
@@ -69,25 +85,32 @@ class WeightedInputArc is subclass of InputArc
       return self
     );
 
+    -- weighted input arcs are enabled if the weight
+    -- is less than the number of tokens of their place
     public isEnabled: map Place to nat ==> bool
     isEnabled(marking) == (
       return marking(place) >= weight;
     );
 
+    -- weighted input arcs remove <weight> tokens from their place
     public trigger: Transition * map Place to nat ==> map Place to nat
     trigger(-, m) == (
       dcl newMarking: map Place to nat := m;
       newMarking(place) := newMarking(place) - weight;
       return newMarking;
     );
+    -- pre isEnabled(m);
+
 end WeightedInputArc
 
 class OutputArc is subclass of Arc
-
+  /* Abstract class for all output arcs: arcs from a transtion to a place */
 end OutputArc
 
 class WeightedOutputArc is subclass of OutputArc
+  /* Output arc with weight */
   instance variables
+    -- amount of tokens that can 'travel' this arc
     public weight: nat;
   operations
     public WeightedOutputArc: Place *nat ==> WeightedOutputArc
@@ -97,15 +120,20 @@ class WeightedOutputArc is subclass of OutputArc
       return self
     );
 
+    -- weighted output arcs are enabled if their place
+    -- capacity is not overrun after moving <weight> tokens
     public isEnabled: map Place to nat ==> bool
     isEnabled(m) == (
       return m(place) + weight <= place.capacity;
     );
 
+    -- weigthed output arcs moves <weight> tokens to their place
     public trigger: Transition * map Place to nat ==> map Place to nat
     trigger(-, m) == (
       dcl newMarking: map Place to nat := m;
       newMarking(place) := newMarking(place) + weight;
       return newMarking;
     );
+    -- pre isEnabled(m);
+
 end WeightedOutputArc

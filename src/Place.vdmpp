@@ -1,7 +1,8 @@
 class Place
+  /* place of a petri net with a maximum capacity */
   instance variables
-    public label: seq of char;
-    public capacity: nat;
+    public label: seq of char; -- name of the place (debug purporses)
+    public capacity: nat; -- max number of tokens that this place can hold
 
   operations
     public Place: seq of char * nat ==> Place

@@ -1,8 +1,9 @@
 class Transition
+  /* transition of a petri net */
   instance variables
-    public label: seq of char;
-    public inputArcs: set of InputArc;
-    public outputArcs: set of OutputArc;
+    public label: seq of char; -- name of the place (debug purporses)
+    public inputArcs: set of InputArc; -- set of all input arcs to this transition
+    public outputArcs: set of OutputArc; -- set of all output arcs from this transition
 
   operations
     public Transition: seq of char * set of InputArc * set of OutputArc ==> Transition
