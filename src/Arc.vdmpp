@@ -98,8 +98,8 @@ class WeightedOutputArc is subclass of OutputArc
     );
 
     public isEnabled: map Place to nat ==> bool
-    isEnabled(-) == (
-      return true;
+    isEnabled(m) == (
+      return m(place) + weight <= place.capacity;
     );
 
     public trigger: Transition * map Place to nat ==> map Place to nat

@@ -32,14 +32,13 @@ class PetriNet
 
       for all arc in set t.inputArcs do (
         if not arc.isEnabled(newMarking) then
-          return newMarking;
-      );
-
-      for all arc in set t.inputArcs do (
+          return m;
         newMarking := arc.trigger(t, newMarking);
       );
-
+      
       for all arc in set t.outputArcs do (
+        if not arc.isEnabled(newMarking) then
+          return m;
         newMarking := arc.trigger(t, newMarking);
       );
 
