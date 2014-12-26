@@ -22,7 +22,7 @@ operations
      petriNet = new PetriNet(places, p1, {}, arcs, marking, transitions) in (
 
       assertEqual({ p1 |-> 3, p2 |-> 0 }, petriNet.marking);
-      
+
       -- Test reachability of the markings before step execution
       assertTrue(petriNet.isReachable({ p1 |-> 2, p2 |-> 1 }));
       assertTrue(petriNet.isReachable({ p1 |-> 1, p2 |-> 2 }));
@@ -89,7 +89,7 @@ operations
       assertTrue(petriNet.isReachable({ p1 |-> 1, p2 |-> 0, p3 |-> 0, p4 |-> 0 }));
       assertTrue(petriNet.isReachable({ p1 |-> 0, p2 |-> 1, p3 |-> 0, p4 |-> 0 }));
       assertTrue(petriNet.isReachable({ p1 |-> 0, p2 |-> 1, p3 |-> 0, p4 |-> 0 }));
-      
+
       assertEqual({ p1 |-> 1, p2 |-> 0, p3 |-> 0, p4 |-> 0 }, petriNet.marking);
 
       -- Test stepwise execution of the petri net

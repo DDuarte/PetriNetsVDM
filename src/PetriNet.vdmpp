@@ -120,7 +120,7 @@ class PetriNet
       dcl sequencePath: seq of Transition := [];
       dcl newMarkingsGenerated: bool := false;
       dcl dummyTransition: Transition := new Transition("Start", { }, { });
-      
+
       stack.push(new DFSElement(initialMarking, dummyTransition)); -- FIX ME
 
       while not stack.empty() do (
@@ -128,7 +128,7 @@ class PetriNet
         currentDFSElement := stack.pop();
         currentTransition := currentDFSElement.transition;
         currentInputMarking := currentDFSElement.marking;
-        
+
         newMarkingsGenerated := false;
 
         if (currentTransition <> dummyTransition) then
@@ -152,13 +152,13 @@ class PetriNet
             stack.push(new DFSElement(currentOutputMarking, transition));
             previousMarkings := previousMarkings union {currentOutputMarking};
           );
-          
+
           -- reached a dead end, remove sequence from path, a backtracking will occur
           if (not newMarkingsGenerated) then (
-            if (len sequencePath > 0) then 
+            if (len sequencePath > 0) then
               sequencePath := tl sequencePath;
           );
-          
+
         );
 
       );
