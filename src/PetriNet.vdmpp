@@ -110,33 +110,55 @@ class PetriNet
     public getAllSequences: map Place to nat * map Place to nat ==> set of seq of Transition
     getAllSequences(initialMarking, targetMarking) == (
       dcl stack: DFSStack := new DFSStack();
+      dcl currentDFSElement: DFSElement;
       dcl currentInputMarking: map Place to nat := initialMarking;
+      dcl currentTransition: Transition;
       dcl currentOutputMarking: map Place to nat := initialMarking;
       dcl previousMarkings: set of map Place to nat := {};
       dcl transitionSeqs: set of seq of Transition := {};
       dcl sequence: seq of Transition;
-
-      stack.push(new DFSElement(initialMarking, new Transition("Start", { }, { }))); -- FIX ME
+      dcl sequencePath: seq of Transition := [];
+      dcl newMarkingsGenerated: bool := false;
+      dcl dummyTransition: Transition := new Transition("Start", { }, { });
+      
+      stack.push(new DFSElement(initialMarking, dummyTransition)); -- FIX ME
 
       while not stack.empty() do (
 
-        currentInputMarking := stack.pop().marking;
+        currentDFSElement := stack.pop();
+        currentTransition := currentDFSElement.transition;
+        currentInputMarking := currentDFSElement.marking;
+        
+        newMarkingsGenerated := false;
+
+        if (currentTransition <> dummyTransition) then
+          sequencePath := [currentTransition] ^ sequencePath;
 
         for all transition in set transitions do (
 
           currentOutputMarking := trigger(transition, currentInputMarking);
 
           -- if target marking is found
-          if (currentOutputMarking = targetMarking) then (
-            sequence := stack.getReverseTransitionSequence();
-            transitionSeqs := transitionSeqs union {sequence};
+          if (currentOutputMarking = targetMarking and currentOutputMarking <> currentInputMarking and currentOutputMarking not in set previousMarkings) then (
+
+            if (len sequencePath <> 0) then (
+              transitionSeqs := transitionSeqs union {sequencePath ^ [transition]};
+            );
           );
 
           -- if marking is not already explored
           if (currentOutputMarking not in set previousMarkings) then (
+            newMarkingsGenerated := true;
             stack.push(new DFSElement(currentOutputMarking, transition));
             previousMarkings := previousMarkings union {currentOutputMarking};
-          )
+          );
+          
+          -- reached a dead end, remove sequence from path, a backtracking will occur
+          if (not newMarkingsGenerated) then (
+            if (len sequencePath > 0) then 
+              sequencePath := tl sequencePath;
+          );
+          
         );
 
       );
