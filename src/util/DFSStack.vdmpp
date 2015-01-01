@@ -22,18 +22,6 @@ class DFSStack
       return len stack = 0
     );
 
-    public getReverseTransitionSequence: () ==> seq of Transition
-    getReverseTransitionSequence() == (
-      dcl reverseSequence: seq of DFSElement := reverse stack;
-      dcl reverseTransitionSequence: seq of Transition := [];
-
-      for dfsElement in reverseSequence do (
-        reverseTransitionSequence := reverseTransitionSequence ^ [dfsElement.transition];
-      );
-
-      return reverseTransitionSequence;
-    );
-
 end DFSStack
 
 class DFSElement
