@@ -1,40 +1,82 @@
+/*
+ * Abstract class to represent arcs between transitions and places
+ */
 class Arc
-  /* Abstract class to represent arcs between transitions and places */
   instance variables
-    -- place origin or destination of this arc
+    /**
+     * Place origin or destination of this arc
+     */
     public place: Place
   operations
-    -- returns true if the arc meets all requirements for an 'event' to happen
+    /**
+     * Returns true if the arc meets all requirements for an 'event' to happen
+     *
+     * @param marking mapping of places to number of tokens
+     * @return boolean
+     */
     public isEnabled: map Place to nat ==> bool
     isEnabled(marking) == is subclass responsibility;
 
-    -- modifies the marking at the place of the arc
+    /**
+     * Modifies the marking at the place of the arc
+     *
+     * @remark Should only be called if arc is enabled
+     * @see isEnabled(marking)
+     *
+     * @param t transition to be triggered
+     * @param m initial marking
+     * @return new marking
+     */
     public trigger: Transition * map Place to nat ==> map Place to nat
     trigger(t, m) == is subclass responsibility;
     -- pre isEnabled(m);
 
 end Arc
 
+/**
+ * Abstract class for all input arcs: arcs from a place to a transition
+ */
 class InputArc is subclass of Arc
-  /* Abstract class for all input arcs: arcs from a place to a transition */
+
 end InputArc
 
+/**
+ * Input arc that consumes all tokens at its place
+ */
 class ResetArc is subclass of InputArc
-  /* Input arc that consumes all tokens at its place */
   operations
+    /**
+     * ResetArc constructor.
+     *
+     * @param place place connected to this arc
+     */
     public ResetArc: Place ==> ResetArc
     ResetArc(p) == (
       place := p;
       return self;
     );
 
-    -- reset arcs are always enabled
+    /**
+     * Reset arcs are always enabled
+     *
+     * @param marking mapping of places to number of tokens
+     * @return boolean
+     */
     public isEnabled: map Place to nat ==> bool
     isEnabled(-) == (
       return true;
     );
 
-    -- reset arcs consume all the tokens at the place
+    /**
+     * Reset arcs consume all the tokens at the place
+     *
+     * @remark Should only be called if arc is enabled
+     * @see isEnabled(marking)
+     *
+     * @param t transition to be triggered
+     * @param m initial marking
+     * @return new marking
+     */
     public trigger: Transition * map Place to nat ==> map Place to nat
     trigger(-, m) == (
       dcl newMarking: map Place to nat := m;
@@ -45,16 +87,28 @@ class ResetArc is subclass of InputArc
 
 end ResetArc
 
+/**
+ * Input arc that is enabled if its place has no tokens
+ */
 class InhibitorArc is subclass of InputArc
-  /* Input arc that is enabled if its place has no tokens */
   operations
+    /**
+     * InhibitorArc constructor.
+     *
+     * @param place place connected to this arc
+     */
     public InhibitorArc: Place ==> InhibitorArc
     InhibitorArc(p) == (
       place := p;
       return self;
     );
 
-    -- inhibitor arcs are enabled if their place is empty
+    /**
+     * Inhibitor arcs are enabled if their place is empty
+     *
+     * @param marking mapping of places to number of tokens
+     * @return boolean
+     */
     public isEnabled: map Place to nat ==> bool
     isEnabled(marking) == (
       if marking(place) = 0 then
@@ -63,7 +117,16 @@ class InhibitorArc is subclass of InputArc
         return false;
     );
 
-    -- inhibitor arcs do not change marking
+    /**
+     * Inhibitor arcs do not change marking
+     *
+     * @remark Should only be called if arc is enabled
+     * @see isEnabled(marking)
+     *
+     * @param t transition to be triggered
+     * @param m initial marking
+     * @return new marking
+     */
     public trigger: Transition * map Place to nat ==> map Place to nat
     trigger(-, m) == (
       return m;
@@ -72,12 +135,22 @@ class InhibitorArc is subclass of InputArc
 
 end InhibitorArc
 
+/**
+ * Input arc with weight
+ */
 class WeightedInputArc is subclass of InputArc
-  /* Input arc with weight */
   instance variables
-    -- amount of tokens that can 'travel' this arc
+    /**
+     * Amount of tokens that can 'travel' this arc
+     */
     public weight: nat;
   operations
+    /**
+     * WeightedInputArc constructor.
+     *
+     * @param place place connected to this arc
+     * @param weight capacity of this arc
+     */
     public WeightedInputArc: Place * nat ==> WeightedInputArc
     WeightedInputArc(p, wght) == (
       place := p;
@@ -85,14 +158,28 @@ class WeightedInputArc is subclass of InputArc
       return self
     );
 
-    -- weighted input arcs are enabled if the weight
-    -- is less than the number of tokens of their place
+    /**
+     * Weighted input arcs are enabled if the weight
+     * is less than the number of tokens of their place
+     *
+     * @param marking mapping of places to number of tokens
+     * @return boolean
+     */
     public isEnabled: map Place to nat ==> bool
     isEnabled(marking) == (
       return marking(place) >= weight;
     );
 
-    -- weighted input arcs remove <weight> tokens from their place
+    /**
+     * Weighted input arcs remove <weight> tokens from their place
+     *
+     * @remark Should only be called if arc is enabled
+     * @see isEnabled(marking)
+     *
+     * @param t transition to be triggered
+     * @param m initial marking
+     * @return new marking
+     */
     public trigger: Transition * map Place to nat ==> map Place to nat
     trigger(-, m) == (
       dcl newMarking: map Place to nat := m;
@@ -103,31 +190,58 @@ class WeightedInputArc is subclass of InputArc
 
 end WeightedInputArc
 
+/**
+ * Abstract class for all output arcs: arcs from a transtion to a place
+ */
 class OutputArc is subclass of Arc
-  /* Abstract class for all output arcs: arcs from a transtion to a place */
+
 end OutputArc
 
+/**
+ * Output arc with weight
+ */
 class WeightedOutputArc is subclass of OutputArc
-  /* Output arc with weight */
   instance variables
-    -- amount of tokens that can 'travel' this arc
+   /**
+    * Amount of tokens that can 'travel' this arc
+    */
     public weight: nat;
   operations
-    public WeightedOutputArc: Place *nat ==> WeightedOutputArc
+    /**
+     * WeightedOutputArc constructor.
+     *
+     * @param place place connected to this arc
+     * @param weight capacity of this arc
+     */
+    public WeightedOutputArc: Place * nat ==> WeightedOutputArc
     WeightedOutputArc(p, wght) == (
       place := p;
       weight := wght;
       return self
     );
 
-    -- weighted output arcs are enabled if their place
-    -- capacity is not overrun after moving <weight> tokens
+    /**
+     * Weighted output arcs are enabled if their place
+     * capacity is not overrun after moving <weight> tokens
+     *
+     * @param marking mapping of places to number of tokens
+     * @return boolean
+     */
     public isEnabled: map Place to nat ==> bool
     isEnabled(m) == (
       return m(place) + weight <= place.capacity;
     );
 
-    -- weigthed output arcs moves <weight> tokens to their place
+    /**
+     * Weighted output arcs moves <weight> tokens to their place
+     *
+     * @remark Should only be called if arc is enabled
+     * @see isEnabled(marking)
+     *
+     * @param t transition to be triggered
+     * @param m initial marking
+     * @return new marking
+     */
     public trigger: Transition * map Place to nat ==> map Place to nat
     trigger(-, m) == (
       dcl newMarking: map Place to nat := m;

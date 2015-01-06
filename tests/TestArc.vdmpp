@@ -18,7 +18,9 @@ operations
     );
   );
 
-  -- Entry point that runs all tests with valid inputs
+  /**
+   * Entry point that runs all tests with valid inputs (no test should fail)
+   */
   public testAll: () ==> ()
   testAll() == (
     IO`println("\t arc tests");

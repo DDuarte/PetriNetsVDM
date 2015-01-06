@@ -1,13 +1,40 @@
+/**
+ * This class represents Petri nets with places, transitions
+ * and multiple types of arcs
+ */
 class PetriNet
-  /* This class represents petrinets with places, transitions
-     and multiple types of arcs */
   instance variables
-    public places : set of Place := {}; -- set of places (redundant)
-    public arcs : set of Arc := {}; -- set of arcs (redundant)
-    public transitions : set of Transition := {}; -- set of transitions (redundant)
-    public marking: map Place to nat := {|->}; -- state of the petri net: number of tokens per place
-    public starts : Place; -- single starting place
-    public finish : set of Place := {}; -- multiple ending places
+    /**
+     * set of places (redundant, places are referenced from arcs)
+     */
+    public places : set of Place := {};
+
+    /**
+     * set of arcs (redundant, arcs are referenced from transitions)
+     */
+    public arcs : set of Arc := {};
+
+    /**
+     * set of transitions
+     */
+    public transitions : set of Transition := {};
+
+    /**
+     * state of the Petri net
+     * mapping of places to number of tokens
+     */
+    public marking: map Place to nat := {|->};
+
+    /**
+     * single starting place
+     */
+    public starts : Place;
+
+    /**
+     * multiple ending places
+     */
+    public finish : set of Place := {};
+
     inv starts in set places;
     inv finish subset places;
     inv forall arc in set arcs & arc.place in set places;
@@ -17,6 +44,16 @@ class PetriNet
     );
 
   operations
+    /**
+     * PetriNet constructor.
+     *
+     * @param p set of places
+     * @param s start place
+     * @param f set of finish places
+     * @param a set of arcs
+     * @param m initial marking (mapping of places to number of tokens)
+     * @param t set of transitions
+     */
     public PetriNet: set of Place * Place * set of Place * set of Arc *
                      map Place to nat * set of Transition ==> PetriNet
     PetriNet(p, s, f, a, m, t) == (
@@ -37,9 +74,19 @@ class PetriNet
        forall a3 in set t1.outputArcs & a3 in set a
       );
 
-    -- triggers given transition and returns the new state
-    -- of the petrinet. note: it does not change the internal state
-    -- of this petrinet instance use executeStep instead
+    /**
+     * Triggers given transition and returns the new state of the Petri net.
+     *
+     * @remark The internal state of the Petri net is not changed by this
+     *         method. For that intention, use executeStep instead.
+     *
+     * @param t transition to be triggered
+     * @param m marking (mapping of places to number of tokens)
+     * @return  new marking representing the new state of the Petri net.
+     *          It may or may not have been modified, depending if
+     *          the transition was actually triggered (i.e all conditions
+     *          at the arcs have been met).
+     */
     private trigger: Transition * map Place to nat ==> map Place to nat
     trigger(t, m) == (
       dcl newMarking: map Place to nat := m;
@@ -61,18 +108,33 @@ class PetriNet
     pre t in set transitions and dom m subset places
     post dom RESULT subset places;
 
-    -- triggers given transition and changes marking accordingly
+    /**
+     * Triggers given transition and changes marking accordingly.
+     *
+     * @see trigger(t, m)
+     *
+     * @param t transition to be triggered
+     * @return  nothing
+     */
     public executeStep: Transition ==> ()
     executeStep(t) == (
       marking := trigger(t, marking);
     )
     pre t in set transitions;
 
-    -- returns true if a marking is reachable
-    -- Reachability def: "Given a computational (potentially infinite state)
-    -- system with a set of allowed rules or transformations,
-    -- decide whether a certain state of a system is reachable
-    -- from a given initial state of the system."
+    /**
+     * Verifies if a given marking is reachable from current state.
+     *
+     * Reachability definition (@wikipedia): "Given a computational
+     * (potentially infinite state) system with a set of allowed rules
+     * or transformations, decide whether a certain state of a system is
+     * reachable from a given initial state of the system."
+     *
+     * @remark The behaviour is undefined if the Petri net is cyclic
+     *
+     * @param targetMarking marking (mapping of places to number of tokens)
+     * @return boolean
+     */
     public isReachable: map Place to nat ==> bool
     isReachable(targetMarking) == (
       dcl stack: DFSStack := new DFSStack();
@@ -90,10 +152,10 @@ class PetriNet
 
           currentOutputMarking := trigger(transition, currentInputMarking);
 
-          -- if target marking is found
+          /* if target marking is found */
           if (currentOutputMarking = targetMarking) then return true;
 
-          -- if marking is not already explored
+          /* if marking is not already explored */
           if (currentOutputMarking not in set previousMarkings) then (
             stack.push(new DFSElement(currentOutputMarking, transition));
             previousMarkings := previousMarkings union {currentOutputMarking};
@@ -106,7 +168,16 @@ class PetriNet
     )
     pre dom targetMarking subset places;
 
-    -- returns all sequences of transitions from an initial marking and a target marking
+    /**
+     * Get all sequences of transitions from an initial marking and
+     * a target marking.
+     *
+     * @remark The behaviour is undefined if the Petri net is cyclic
+     *
+     * @param initialMarking initial marking (mapping of places to number of tokens)
+     * @param targetMarking final marking (mapping of places to number of tokens)
+     * @return set of seq of transitions
+     */
     public getAllSequences: map Place to nat * map Place to nat ==> set of seq of Transition
     getAllSequences(initialMarking, targetMarking) == (
       dcl stack: DFSStack := new DFSStack();
@@ -137,22 +208,23 @@ class PetriNet
 
           currentOutputMarking := trigger(transition, currentInputMarking);
 
-          -- if target marking is found
-          if (currentOutputMarking = targetMarking and currentOutputMarking <> currentInputMarking and currentOutputMarking not in set previousMarkings) then (
-
+          /* if target marking is found */
+          if (currentOutputMarking = targetMarking and
+           currentOutputMarking <> currentInputMarking and
+           currentOutputMarking not in set previousMarkings) then (
             if (len sequencePath <> 0) then (
               transitionSeqs := transitionSeqs union {sequencePath ^ [transition]};
             );
           );
 
-          -- if marking is not already explored
+          /* if marking is not already explored */
           if (currentOutputMarking not in set previousMarkings) then (
             newMarkingsGenerated := true;
             stack.push(new DFSElement(currentOutputMarking, transition));
             previousMarkings := previousMarkings union {currentOutputMarking};
           );
 
-          -- reached a dead end, remove sequence from path, a backtracking will occur
+          /* reached a dead end, remove sequence from path, a backtracking will occur */
           if (not newMarkingsGenerated) then (
             if (len sequencePath > 0) then
               sequencePath := tl sequencePath;

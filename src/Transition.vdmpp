@@ -1,11 +1,31 @@
+/**
+ * Transition of a Petri net
+ */
 class Transition
-  /* transition of a petri net */
   instance variables
-    public label: seq of char; -- name of the place (debug purporses)
-    public inputArcs: set of InputArc; -- set of all input arcs to this transition
-    public outputArcs: set of OutputArc; -- set of all output arcs from this transition
+    /**
+     * Name of the transition (debug/cosmetic purposes)
+     */
+    public label: seq of char;
+
+    /**
+     * Set of all input arcs to this transition
+     */
+    public inputArcs: set of InputArc;
+
+    /**
+     * Set of all output arcs from this transition
+     */
+    public outputArcs: set of OutputArc;
 
   operations
+    /**
+     * Transition constructors.
+     *
+     * @param newLabel description of the transition
+     * @param ia set of connected input places
+     * @param oa set of connected output places
+     */
     public Transition: seq of char * set of InputArc * set of OutputArc ==> Transition
     Transition(newLabel, ia, oa) == (
       label := newLabel;

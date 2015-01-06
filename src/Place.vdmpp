@@ -1,10 +1,25 @@
+/**
+ * Place of a Petri net with a maximum capacity
+ */
 class Place
-  /* place of a petri net with a maximum capacity */
   instance variables
-    public label: seq of char; -- name of the place (debug purporses)
-    public capacity: nat; -- max number of tokens that this place can hold
+    /**
+     * Name of the place (debug/cosmetic purposes)
+     */
+    public label: seq of char;
+
+    /**
+     * Maximum number of tokens that this place can hold
+     */
+    public capacity: nat;
 
   operations
+    /**
+     * Place constructors.
+     *
+     * @param newLabel description of the place
+     * @param newCapacity capacity of the place
+     */
     public Place: seq of char * nat ==> Place
     Place(newLabel, newCapacity) == (
       label := newLabel;

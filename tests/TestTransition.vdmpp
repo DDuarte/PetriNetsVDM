@@ -14,7 +14,7 @@ operations
     );
   );
 
-  -- Entry point that runs all tests with valid inputs
+  /* Entry point that runs all tests with valid inputs */
   public testAll: () ==> ()
   testAll() == (
     IO`println("\t transition tests");
