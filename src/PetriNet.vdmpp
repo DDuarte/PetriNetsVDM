@@ -38,9 +38,10 @@ class PetriNet
     inv starts in set places;
     inv finish subset places;
     inv forall arc in set arcs & arc.place in set places;
+    inv dom marking subset places;
     inv forall transition in set transitions & (
-     forall arc in set transition.inputArcs & arc in set arcs and
-     forall arc2 in set transition.outputArcs & arc2 in set arcs
+     transition.inputArcs subset arcs and
+     transition.outputArcs subset arcs
     );
 
   operations
@@ -57,12 +58,14 @@ class PetriNet
     public PetriNet: set of Place * Place * set of Place * set of Arc *
                      map Place to nat * set of Transition ==> PetriNet
     PetriNet(p, s, f, a, m, t) == (
-      places := p;
-      starts := s;
-      finish := f;
-      arcs := a;
-      marking := m;
-      transitions := t;
+      atomic(
+        places := p;
+        starts := s;
+        finish := f;
+        arcs := a;
+        marking := m;
+        transitions := t;
+      );
       return self;
     )
     pre dom m = p and

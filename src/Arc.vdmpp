@@ -63,9 +63,10 @@ class ResetArc is subclass of InputArc
      * @return boolean
      */
     public isEnabled: map Place to nat ==> bool
-    isEnabled(-) == (
+    isEnabled(marking) == (
       return true;
-    );
+    )
+    pre place in set dom marking;
 
     /**
      * Reset arcs consume all the tokens at the place
@@ -82,8 +83,9 @@ class ResetArc is subclass of InputArc
       dcl newMarking: map Place to nat := m;
       newMarking(place) := 0;
       return newMarking;
-    );
-    -- pre isEnabled(m);
+    )
+    -- pre isEnabled(m)
+    pre place in set dom m;
 
 end ResetArc
 
@@ -115,7 +117,8 @@ class InhibitorArc is subclass of InputArc
         return true
       else
         return false;
-    );
+    )
+    pre place in set dom marking;
 
     /**
      * Inhibitor arcs do not change marking
@@ -130,8 +133,9 @@ class InhibitorArc is subclass of InputArc
     public trigger: Transition * map Place to nat ==> map Place to nat
     trigger(-, m) == (
       return m;
-    );
-    -- pre isEnabled(m);
+    )
+    -- pre isEnabled(m)
+    pre place in set dom m;
 
 end InhibitorArc
 
@@ -168,7 +172,8 @@ class WeightedInputArc is subclass of InputArc
     public isEnabled: map Place to nat ==> bool
     isEnabled(marking) == (
       return marking(place) >= weight;
-    );
+    )
+    pre place in set dom marking;
 
     /**
      * Weighted input arcs remove <weight> tokens from their place
@@ -185,8 +190,9 @@ class WeightedInputArc is subclass of InputArc
       dcl newMarking: map Place to nat := m;
       newMarking(place) := newMarking(place) - weight;
       return newMarking;
-    );
-    -- pre isEnabled(m);
+    )
+    -- pre isEnabled(m)
+    pre place in set dom m;
 
 end WeightedInputArc
 
@@ -230,7 +236,8 @@ class WeightedOutputArc is subclass of OutputArc
     public isEnabled: map Place to nat ==> bool
     isEnabled(m) == (
       return m(place) + weight <= place.capacity;
-    );
+    )
+    pre place in set dom m;
 
     /**
      * Weighted output arcs moves <weight> tokens to their place
@@ -247,7 +254,8 @@ class WeightedOutputArc is subclass of OutputArc
       dcl newMarking: map Place to nat := m;
       newMarking(place) := newMarking(place) + weight;
       return newMarking;
-    );
-    -- pre isEnabled(m);
+    )
+    -- pre isEnabled(m)
+    pre place in set dom m;
 
 end WeightedOutputArc

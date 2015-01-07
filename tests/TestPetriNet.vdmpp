@@ -1,6 +1,9 @@
 class TestPetriNet is subclass of MyTestCase
 
 operations
+  /**
+   * Requirements: R1, R2.3, R2.4, R3, R4, R5
+   */
   public testElevator1Example: () ==> ()
   testElevator1Example() == (
     /* http://www.informatik.uni-hamburg.de/TGI/PetriNets/introductions/aalst/elevator1.swf */
@@ -57,6 +60,9 @@ operations
     );
   );
 
+  /**
+   * Requirements: R1, R2.3, R2.4, R3, R4, R5
+   */
   public testElevator2Example: () ==> ()
   testElevator2Example() == (
     /* http://www.informatik.uni-hamburg.de/TGI/PetriNets/introductions/aalst/elevator2.swf */
@@ -115,6 +121,9 @@ operations
     );
   );
 
+  /**
+   * Requirements: R1, R2.3, R2.4, R3, R4, R5
+   */
   public testElevator3Example: () ==> ()
   testElevator3Example() == (
     /* http://www.informatik.uni-hamburg.de/TGI/PetriNets/introductions/aalst/elevator3.swf */
@@ -175,6 +184,9 @@ operations
     );
   );
 
+  /**
+   * Requirements: R1, R2.2, R2.3, R2.4, R3, R4
+   */
   public testSimpleInhibitorArc: () ==> ()
   testSimpleInhibitorArc() == (
     /* http://www.techfak.uni-bielefeld.de/~mchen/BioPNML/Intro/pnfaq_files/image005.gif */
@@ -218,6 +230,9 @@ operations
     );
   );
 
+  /**
+   * Requirements: R1, R2.1, R2.3, R2.4, R3, R4
+   */
   public testSimpleResetArc: () ==> ()
   testSimpleResetArc() == (
     /* http://www.techfak.uni-bielefeld.de/~mchen/BioPNML/Intro/pnfaq_files/image003.gif (mod.) */
@@ -257,6 +272,9 @@ operations
     );
   );
 
+  /**
+   * Requirements: R1, R2.3, R2.4, R3, R4
+   */
   public testSimpleCapacityArc: () ==> ()
   testSimpleCapacityArc() == (
     /* http://www.techfak.uni-bielefeld.de/~mchen/BioPNML/Intro/pnfaq_files/image003.gif (mod.) */
