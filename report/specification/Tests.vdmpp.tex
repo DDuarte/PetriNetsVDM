@@ -1,0 +1,29 @@
+\begin{vdmpp}
+class Tests
+  operations
+(*@
+\label{main:3}
+@*)
+    public static main: () ==> ()
+    main() == (*@\vdmnotcovered{(}@*)
+      (*@\vdmnotcovered{IO`println}@*)((*@\vdmnotcovered{"Running tests"}@*));
+      new (*@\vdmnotcovered{TestPlace}@*)().testAll();
+      new (*@\vdmnotcovered{TestTransition}@*)().testAll();
+      new (*@\vdmnotcovered{TestArc}@*)().testAll();
+      new (*@\vdmnotcovered{TestPetriNet}@*)().testAll();
+      (*@\vdmnotcovered{IO`println}@*)((*@\vdmnotcovered{"Tests finished"}@*));
+    );
+end Tests
+\end{vdmpp}
+\bigskip
+\begin{longtable}{|l|r|r|r|}
+\hline
+Function or operation & Line & Coverage & Calls \\
+\hline
+\hline
+\hyperref[main:3]{main} & 3&100.0\% & 1 \\
+\hline
+\hline
+Tests.vdmpp & & 100.0\% & 1 \\
+\hline
+\end{longtable}

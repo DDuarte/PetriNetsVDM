@@ -1,0 +1,47 @@
+\begin{vdmpp}
+/**
+ * Place of a Petri net with a maximum capacity
+ */
+class Place
+  instance variables
+    /**
+     * Name of the place (debug/cosmetic purposes)
+     */
+    public label: seq of char;
+
+    /**
+     * Maximum number of tokens that this place can hold
+     */
+    public capacity: nat;
+
+  operations
+    /**
+     * Place constructors.
+     *
+     * @param newLabel description of the place
+     * @param newCapacity capacity of the place
+     */
+(*@
+\label{Place:23}
+@*)
+    public Place: seq of char * nat ==> Place
+    Place(newLabel, newCapacity) == (
+      label := newLabel;
+      capacity := newCapacity;
+      return self
+    )
+    pre newCapacity > 0;
+end Place
+\end{vdmpp}
+\bigskip
+\begin{longtable}{|l|r|r|r|}
+\hline
+Function or operation & Line & Coverage & Calls \\
+\hline
+\hline
+\hyperref[Place:23]{Place} & 23&100.0\% & 27 \\
+\hline
+\hline
+Place.vdmpp & & 100.0\% & 27 \\
+\hline
+\end{longtable}

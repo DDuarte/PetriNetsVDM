@@ -1,0 +1,42 @@
+\begin{vdmpp}
+class TestPlace is subclass of MyTestCase
+
+operations
+(*@
+\label{testConstructor:4}
+@*)
+  public testConstructor: () ==> ()
+  testConstructor() == (
+    IO`println("\t\t test constructor");
+    let p = new Place("test1", 1) in (
+      assertEqual("test1", p.label);
+      assertEqual(1,  p.capacity);
+    );
+  );
+
+  /* Entry point that runs all tests with valid inputs */
+(*@
+\label{testAll:14}
+@*)
+  public testAll: () ==> ()
+  testAll() == (
+    IO`println("\t place tests");
+    testConstructor();
+  );
+
+end TestPlace
+\end{vdmpp}
+\bigskip
+\begin{longtable}{|l|r|r|r|}
+\hline
+Function or operation & Line & Coverage & Calls \\
+\hline
+\hline
+\hyperref[testAll:14]{testAll} & 14&100.0\% & 1 \\
+\hline
+\hyperref[testConstructor:4]{testConstructor} & 4&100.0\% & 1 \\
+\hline
+\hline
+TestPlace.vdmpp & & 100.0\% & 2 \\
+\hline
+\end{longtable}

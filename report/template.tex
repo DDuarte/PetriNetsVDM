@@ -1,0 +1,503 @@
+\documentclass[a4paper]{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{indentfirst}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{float}
+\usepackage{url}
+\usepackage[color]{vdmlisting}
+\usepackage{longtable}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fullpage}
+
+\begin{document}
+
+\setlength{\textwidth}{16cm}
+\setlength{\textheight}{22cm}
+
+\title{\Huge\textbf{Formal Modelling of a Petri Net in VDM++}\linebreak\textbf{}\linebreak\linebreak
+\Large\textbf{Final Report}\linebreak\linebreak
+\includegraphics[height=6cm, width=7cm]{feup.pdf}\linebreak \linebreak
+\Large{Master in Informatics and Computing Engineering} \linebreak \linebreak
+\Large{Formal Methods in Software Engineering}\linebreak
+}
+
+\author{\textbf{Group T03\_3:}\\ Duarte Nuno Pereira Duarte - ei11101 \\ Ruben Fernando Pinto Cordeiro - ei11097 \\\linebreak\linebreak \\
+ \\ Faculdade de Engenharia da Universidade do Porto \\ Rua Roberto Frias, s\/n, 4200-465 Porto, Portugal \linebreak\linebreak\linebreak
+\linebreak\linebreak\vspace{1cm}}
+%\date{Junho de 2007}
+\maketitle
+
+\thispagestyle{empty}
+\newpage
+\tableofcontents
+
+%************************************************************************************************
+%************************************************************************************************
+
+\newpage
+
+\section {Summary}
+
+The goal of this project is to model the structure and behaviour of a Petri net in VDM++.
+
+A Petri net is mathematical modelling language for the description of distributed systems. It is typically represented by a graphical notation for stepwise processes that include choice, iteration and cocurrent execution.
+
+In order to build the executable formal model, the model-oriented specification language from the \emph{Vienna Development Method} (VDM++) was used, as well as the Overture Tool\cite{Overture} for development.
+
+\newpage
+
+\section {System Description}
+\label{sec:system_description}
+
+Petri nets are a graphical and mathematical modeling tool applicable to many systems. As a graphical tool, Petri nets can be used as a visual-communication aid similar to flow charts, block diagrams and netweorks. In addition, tokens are used in these nets to simulate the dynamic and concurrent activities of systems.
+
+\begin{figure}[h]
+\includegraphics[width=17cm]{petrinet.png}
+\caption{Petri net graphical structure}
+\end{figure}
+
+A Petri net is a directed bipartite graph, in which the nodes represent transitions (i.e. events that may occur, signified by bars) and places (i.e. conditions, signified by circles). The directed arcs describe which places are pre- and/or postconditions for which transitions (signified by arrows).
+
+A Petri net can be described as a 5-tuple, $PN = (P, T, F, W, M_0)$, where: 
+
+\begin{itemize}
+	\item [P] = $\{p_1, p_2, ..., p_m\}$ is a finite set of places.
+    \item [T] = $\{t_1, t_2, ..., t_n\}$ is a finite set of transitions.
+    \item [F] $\subseteq (P \times T) \bigcup (T \times P)$ is a set of arcs.
+    \item [W]: $F \rightarrow \{1, 2, 3, ...\}$ is a weight function.
+    \item [$M_0$]: $P \rightarrow \{0, 1, 2, 3, ...\}$ is the initial marking.
+\end{itemize}
+
+Graphically, places in a Petri net may contain a discrete number of marks called tokens. Any distribution of tokens over the places will represent a configuration of the net called a marking. In an abstract sense relating to a Petri net diagram, a transition of a Petri net may fire if it is enabled, i.e. there are sufficient tokens in all of its input places; when the transition fires, it consumes the required input tokens, and creates tokens in its output places. A firing is atomic, i.e., a single non-interruptible step.
+
+\subsection{Arc types and firing rules}
+
+There are three types of arcs:
+
+\begin{itemize}
+	\item Weighted arcs.
+    \item Inhibitor arcs.
+    \item Reset arcs.
+\end{itemize}
+
+The state or marking in a Petri net is changed according to a firing rule for a transition t.
+
+A reset arc does not impose a precondition on firing: the transition is always enabled and the place is emptied when the transition fires.
+
+An inhibitor arc imposes the precondition that the transition may only fire when the place is empty.
+
+If the arc is weighted, the following firing rule applies:
+
+\begin{enumerate}
+	\item A transition t is said to be enabled is each input place \textit{p} of t is marked with at least w(p, t) tokens, where w(p, t) is the weight of the arc from p to t.
+    \item The firing of the enabled transition t removes w(p, t) tokens from each input place p of t, and adds w(t, p) tokens to each output place p of t, where w(t, p) is the weight of the arc from t to p.
+\end{enumerate}
+
+\subsection{Reachability}
+
+The reachability problem for Petri nets is to decide, given a Petri net N and a marking M, whether $M \in  R(N)$.
+This is a matter of walking the reachability graph until either the requested marking is reached or there is a point where it can no longer be found.
+
+\newpage
+
+\section {Requirements}
+
+% Informal system description and list of requirements [10%]
+% 	Requirements should include any relevant constraints (regarding safety, etc.).
+% 	Each requirement should have an identifier.
+% 	You may have optional requirements.
+
+List of Requirements:
+
+\begin{itemize}
+  \item[\textbf{R1}] The user can instantiate a Petri net given a set of places, transitions and arcs
+  \item[\textbf{R2}] It should be possible to extend the Petri net with:
+  \begin{enumerate}
+    \item reset arcs
+    \item inhibitor arcs
+    \item adding capacities to places
+    \item weighted input and output arcs
+  \end{enumerate}
+  \item [\textbf{R3}] The user can trigger the stepwise execution of a Petri net (by firing an enabled transition at a time).
+  \item [\textbf{R4}] The user can verify if a given marking can be reached from an initial marking.
+  \item [\textbf{R5}] The user can get a set of possible transitions between an initial marking and a target marking.
+\end{itemize}
+
+\newpage
+
+\section {Visual UML Models}
+\subsection {Use Case Models}
+
+\includegraphics[height= 20cm, width=15cm]{Use_Case_Model.png}
+
+\subsection {Major Use Cases Descriptions}	
+
+\begin{center}
+    \begin{tabular}{| l | p{10cm} |}
+    \hline
+    Scenario & Trigger stepwise execution \\ \hline
+    Description & User triggers a transition of the Petri net \\ \hline
+    Pre-conditions & 
+    \begin{minipage}{10cm}
+    \vskip 4pt
+    \begin{enumerate}
+    	\item The specified transition exists in the Petri net. (\textit{input})
+    \end{enumerate}
+    \vskip 4pt
+    \end{minipage}
+    \\ \hline
+    Post-conditions & 
+    \begin{minipage}{10cm}
+    \vskip 4pt
+    \begin{enumerate}
+    	\item The marking places domain remains unchanged.
+    	\item The marking of the Petri net is changed according to the triggered transition. (\textit{output})
+    \end{enumerate}
+    \vskip 4pt
+    \end{minipage} \\ \hline
+    Steps &
+    \begin{minipage}{10cm}
+    \vskip 4pt
+    (Unspecified)
+    \vskip 4pt
+    \end{minipage}
+    \\ \hline
+    Exceptions & 
+    \begin{minipage}{10cm}
+    \vskip 4pt
+    (Unspecified)
+    \vskip 4pt
+    \end{minipage}
+    \\ \hline
+    \end{tabular}
+\end{center}
+
+
+%Reachability%
+
+\begin{center}
+    \begin{tabular}{| l | p{10cm} |}
+    \hline
+    Scenario & Determine marking reachability \\ \hline
+    Description &  Determine whether a given marking can be reached from an initial marking \\ \hline
+    Pre-conditions & 
+    \begin{minipage}{10cm}
+    \vskip 4pt
+    \begin{enumerate}
+    	\item The places of the given marking exist in the Petri net (\textit{input})
+    \end{enumerate}
+    \vskip 4pt
+    \end{minipage}
+    \\ \hline
+    Post-conditions & 
+    \begin{minipage}{10cm}
+    \vskip 4pt
+    \begin{enumerate}
+    \item The state of the Petri net remains unchanged (\textit{final system state})
+    \end{enumerate}
+    \vskip 4pt
+    \end{minipage} \\ \hline
+    Steps &
+    \begin{minipage}{10cm}
+    \vskip 4pt
+    (Unspecified)
+    \vskip 4pt
+    \end{minipage}
+    \\ \hline
+    Exceptions & 
+    \begin{minipage}{10cm}
+    \vskip 4pt
+    Behaviour is undefined if the Petri net has cycles.
+    \vskip 4pt
+    \end{minipage}
+    \\ \hline
+    \end{tabular}
+\end{center}
+
+% Set of transitions %
+
+\begin{center}
+    \begin{tabular}{| l | p{10cm} |}
+    \hline
+    Scenario & Get all sequences of transitions \\ \hline
+    Description &  Get all sequences of transitions from an initial and target marking \\ \hline
+    Pre-conditions & 
+    \begin{minipage}{10cm}
+    \vskip 4pt
+    \begin{enumerate}
+    	\item The places of the initial and target markings exist in the Petri net (\textit{input})
+    \end{enumerate}
+    \vskip 4pt
+    \end{minipage}
+    \\ \hline
+    Post-conditions & 
+    \begin{minipage}{10cm}
+    \vskip 4pt
+    \begin{enumerate}
+    \item The state of the Petri net remains unchanged (\textit{final system state})
+    \end{enumerate}
+    \vskip 4pt
+    \end{minipage} \\ \hline
+    Steps &
+    \begin{minipage}{10cm}
+    \vskip 4pt
+    (Unspecified)
+    \vskip 4pt
+    \end{minipage}
+    \\ \hline
+    Exceptions & 
+    \begin{minipage}{10cm}
+    \vskip 4pt
+    Behaviour is undefined if the Petri net has cycles.
+    \vskip 4pt
+    \end{minipage}
+    \\ \hline
+    \end{tabular}
+\end{center}
+
+\newpage
+\section {Visual UML model}
+
+% Visual UML model  [10%]
+% 	A use case diagram, describing the system actors and use cases, with a short description of each actor and use case.
+% 	One or more class diagram(s), describing the structure of the VDM++ model, with a short description of each class and type, plus other relevant explanations.
+
+\includegraphics[width=17cm]{class_diagram_full.png}
+
+\newpage 
+
+\section {Formal VDM++ model}
+\label{sec:formal_model}
+
+% VDM++ classes, properly commented.
+% Needed data types (e.g., String, Date, etc.) should be modeled with types, values and functions.
+% Domain entities should be modeled with classes, instance variables and operations.
+% You are expected to make adequate usage of the VDM++ types (sets, sequences, maps, etc.) and create a model at a high level of abstraction.
+% The model should contain adequate contracts, i.e., invariants, preconditions, and postconditions. Postconditions need only be defined in cases where they are significantly different from the operation or function body.
+% During the development of the project, if you foresee that the size of the VDM++ model will be less than 5 pages or more than 10 pages, you should contact your teacher to possibly adjust the scope of the system or the modeling approach being followed.
+
+\subsection{Arc}
+\input{specification/Arc.vdmpp.tex}
+
+\newpage
+
+\subsection{PetriNet}
+\input{specification/PetriNet.vdmpp.tex}
+
+\newpage
+
+\subsection{Place}
+\input{specification/Place.vdmpp.tex}
+
+\newpage
+
+\subsection{Transition}
+\input{specification/Transition.vdmpp.tex}
+
+\newpage
+
+\subsection{DFSStack}
+\input{specification/DFSStack.vdmpp.tex}
+
+\newpage
+
+\section {Model validation}
+
+% Model validation (i.e., testing) [20%]
+% 	VDM++ test classes, containing adequate and thorough test cases defined by means of traces or operations.
+% 	Optionally, figures of examples exercised in the test cases.
+% 	Evidences of test results (passed/failed). A printscreen may be sufficient.
+% 	Code coverage information (it is sufficient to present the system classes mentioned in 4 painted with coverage information). Ideally, 100% coverage should be achieved.
+% 	Requirements traceability relationship between test cases and requirements. Ideally, 100% requirements coverage should be achieved. It may be sufficient to indicate in comments for each test case the requirements that are exercised.
+
+\subsection{MyTestCase}
+\input{specification/MyTestCase.vdmpp.tex}
+
+\newpage
+
+\subsection{TestArc}
+\input{specification/TestArc.vdmpp.tex}
+
+\newpage
+
+\subsection{TestPetriNet}
+\input{specification/TestPetriNet.vdmpp.tex}
+
+\newpage
+
+\subsection{TestPlace}
+\input{specification/TestPlace.vdmpp.tex}
+
+\newpage
+
+\subsection{TestTransition}
+\input{specification/TestTransition.vdmpp.tex}
+
+\newpage
+
+\subsection{Tests}
+\input{specification/Tests.vdmpp.tex}
+
+
+Tests output:
+
+\begin{verbatim}
+** Overture Console
+**
+Running tests
+     place tests
+         test constructor
+     transition tests
+         test constructor
+     arc tests
+         test constructor
+     petrinet tests
+         test elevator 1
+         test elevator 2
+         test elevator 3
+         test simple inhibitor arc
+         test simple reset arc
+         test simple capacity arc
+Tests finished
+
+Tests`main() = ()
+\end{verbatim}
+
+\newpage
+
+\section {Model verification}
+
+% Model verification (i.e., consistency analysis) [5%]
+% 	An example of ‘proving’ that the pre and postconditions of an operation preserve the class invariants.
+% 	An example of ‘proving’ that the algorithmic body of an operation ensures the postconditions, assuming that the preconditions hold.
+
+\subsection {Example of Domain Verification}
+
+One of the proof obligation generated by Overture is:
+
+\begin{center}
+    \begin{tabular}{| l | p{8cm} | p{6cm} |}
+    \hline
+    No. & PO Name & Type \\ \hline
+    2 & WeigthedInputArc`isEnabled(map (Place) to (nat)) & legal map application \\ \hline
+    \end{tabular}
+\end{center}
+
+The code under analysis (with the relevant map application underlined) is:
+
+\begin{vdmpp}
+    public isEnabled: map Place to nat ==> bool
+    isEnabled(marking) == (
+      return (*@\underline{marking(place)}@*) >= weight;
+    )
+    pre place in set dom marking;
+\end{vdmpp}
+
+The proof is trivial because the pre condition states that \textit{place} must be in the domain of the map \textit{marking}, therefore the map application must be valid when the operation is executed.
+
+\subsection {Example of Invariant Verification}
+
+One of the proof obligation generated by Overture is:
+
+\begin{center}
+    \begin{tabular}{| l | p{8cm} | p{6cm} |}
+    \hline
+    No. & PO Name & Type \\ \hline
+    7 & PetriNet`PetriNet(set of (Place), Place, set of (Place), set of (Arc), map (Place) to (nat), set of (Transition)) & state invariant holds \\ \hline
+    \end{tabular}
+\end{center}
+
+The code under analysis is:
+
+\begin{vdmpp}
+    public PetriNet: set of Place * Place * set of Place * set of Arc *
+                     map Place to nat * set of Transition ==> PetriNet
+    PetriNet(p, s, f, a, m, t) == (
+      atomic(
+        places := p; starts := s; finish := f;
+        arcs := a; marking := m; transitions := t;
+      );
+      return self;
+    )
+    pre dom m = p and
+      s in set p and
+      f subset p and
+      forall a1 in set a & a1.place in set p and
+      forall t1 in set t & (
+       forall a2 in set t1.inputArcs & a2 in set a and
+       forall a3 in set t1.outputArcs & a3 in set a
+      );
+\end{vdmpp}
+
+The relevant invariants under analysis are:
+
+\begin{vdmpp}
+    inv starts in set places; -- inv1
+    inv finish subset places; -- inv2
+    inv forall arc in set arcs & arc.place in set places; -- inv3
+    inv dom marking subset places; -- inv4
+    inv forall transition in set transitions & (
+     transition.inputArcs subset arcs and
+     transition.outputArcs subset arcs
+    ); -- inv5
+\end{vdmpp}
+
+Invariants must hold true after and before the \textit{atomic} block is executed.
+
+Having the pre condition \texttt{s in set p} and the atomic block of code \texttt{places := p; starts := s;} implies that \texttt{starts in set places} which is directly translated into \textit{inv1}.
+
+Having the pre condition \texttt{f subset p} and the atomic block of code \texttt{places := p; finish := f;} implies that \texttt{finish subset places} which is directly translated into \textit{inv2}.
+
+The pre condition \texttt{forall a1 in set a \& a1.place in set p} and the atomic block of code \texttt{places := p; arcs := a;} states that the place at each arc in the set of arcs must be in the set of place, that is \texttt{forall arc in set arcs \& arc.place in set places} (\textit{inv3}).
+
+The 4th invariant says that \texttt{dom marking subset places}. Since \texttt{dom m = p} and \texttt{places := p; marking := m;} then we have \texttt{dom marking = places} which also means that \texttt{marking} is a subset of \texttt{places}.
+
+\textit{inv5} verifies that all input and output arcs of transitions are a subset of arcs which can be verified because the precondition states that each input and output arc must be in the set of arcs, which obviously true.
+
+\newpage
+
+\section {Conclusions}
+
+% 	Results achieved
+% 	Things that could be improved
+% 	Division of effort and contributions between team members
+
+\subsection {Results}
+
+The developed model satisfies all the necessary requirements. All the Petri net extensions were implemented, such as inhibitor arcs and reset arcs.
+
+\subsection{Improvements}
+The reachability analysis and determination of all sequences of transitions do not detect cycles in the Petri net, however, since that problem is EXPSPACE-hard\footnote{decision problems solvable by a deterministic Turing machine in $O(2^{p(n)})$}, it is not easy to implement.
+
+Other mathematical properties of Petri nets could be implemented, such as the liveness and boundedness analysis.
+
+Another improvement would be to be able to fire multiple transitions simultaneously as well as supporting multiple types of concurrency like interleaving or independence models \cite{Hayman}.
+
+\subsection{Work division}
+All members of the group worked equally in the development of the project.
+
+
+\clearpage
+\addcontentsline{toc}{section}{References}
+\renewcommand\refname{References}
+
+\begin{thebibliography}{9}
+
+% http://www.informatik.uni-hamburg.de/TGI/PetriNets/introductions/aalst/ Interactive Tutorials on Petri Nets
+
+%\bibitem{OMAS}
+%  Optimization in Multi-Agent Systems,
+%  \url{http://videolectures.net/ijcai2011_t3_optimization/},
+%  30 10 2014.
+
+\bibitem{Murata} Murata, Tadao \emph{Petri Nets: Properties, Analysis and Applications}, May 1988.
+\bibitem{Hayman} Hayman, Jonathan M. \emph{Petri net semantics}, University of Cambridge, Computer Laboratory, 2010.
+\bibitem{Overture} Overture, Overture Tool website, {\url{http://overturetool.org/}}. accessed on 22-12-2014.
+\bibitem{vdmReference} Peter G. Larsen and Kenneth Lausdahl and Nick Battle and John Fitzgerald and Sune Wolff. VDM-10 Language Manual. Overture. February 2011.
+
+\end{thebibliography}
+
+\end{document}

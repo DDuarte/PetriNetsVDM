@@ -1,0 +1,52 @@
+\begin{vdmpp}
+class TestArc is subclass of MyTestCase
+
+operations
+(*@
+\label{testConstructors:4}
+@*)
+  public testConstructors: () ==> ()
+  testConstructors() == (
+    IO`println("\t\t test constructor");
+    let p = new Place(),
+     wia = new WeightedInputArc(p, 1),
+     ra = new ResetArc(p),
+     ia = new InhibitorArc(p),
+     woa = new WeightedOutputArc(p, 2) in (
+      assertEqual(1, wia.weight);
+      assertEqual(2, woa.weight);
+      assertEqual(p, wia.place);
+      assertEqual(p, woa.place);
+      assertEqual(p, ra.place);
+      assertEqual(p, ia.place);
+    );
+  );
+
+  /**
+   * Entry point that runs all tests with valid inputs (no test should fail)
+   */
+(*@
+\label{testAll:24}
+@*)
+  public testAll: () ==> ()
+  testAll() == (
+    IO`println("\t arc tests");
+    testConstructors();
+  );
+
+end TestArc
+\end{vdmpp}
+\bigskip
+\begin{longtable}{|l|r|r|r|}
+\hline
+Function or operation & Line & Coverage & Calls \\
+\hline
+\hline
+\hyperref[testAll:24]{testAll} & 24&100.0\% & 1 \\
+\hline
+\hyperref[testConstructors:4]{testConstructors} & 4&100.0\% & 1 \\
+\hline
+\hline
+TestArc.vdmpp & & 100.0\% & 2 \\
+\hline
+\end{longtable}

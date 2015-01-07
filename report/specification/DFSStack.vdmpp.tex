@@ -1,0 +1,75 @@
+\begin{vdmpp}
+class DFSStack
+  instance variables
+    stack: seq of DFSElement := [];
+  operations
+(*@
+\label{reset:5}
+@*)
+    public reset: () ==> ()
+    reset() ==
+      stack := [];
+(*@
+\label{pop:8}
+@*)
+    public pop: () ==> DFSElement
+    pop() ==
+      def res = hd stack in
+      (stack := tl stack;
+      return res)
+    pre stack <> [];
+
+(*@
+\label{push:15}
+@*)
+    public push: DFSElement ==> ()
+    push(element) == (
+      stack := [element] ^ stack;
+    );
+
+(*@
+\label{empty:20}
+@*)
+    public empty: () ==> bool
+    empty() == (
+      return len stack = 0
+    );
+
+end DFSStack
+
+class DFSElement
+  instance variables
+    public marking: map Place to nat;
+    public transition: Transition;
+  operations
+(*@
+\label{DFSElement:32}
+@*)
+    public DFSElement: map Place to nat * Transition ==> DFSElement
+    DFSElement(mrk, trans) == (
+      marking := mrk;
+      transition := trans;
+      return self;
+    );
+end DFSElement
+\end{vdmpp}
+\bigskip
+\begin{longtable}{|l|r|r|r|}
+\hline
+Function or operation & Line & Coverage & Calls \\
+\hline
+\hline
+\hyperref[DFSElement:32]{DFSElement} & 32&100.0\% & 55 \\
+\hline
+\hyperref[empty:20]{empty} & 20&100.0\% & 59 \\
+\hline
+\hyperref[pop:8]{pop} & 8&100.0\% & 53 \\
+\hline
+\hyperref[push:15]{push} & 15&100.0\% & 55 \\
+\hline
+\hyperref[reset:5]{reset} & 5&0.0\% & 0 \\
+\hline
+\hline
+DFSStack.vdmpp & & 100.0\% & 22 \\
+\hline
+\end{longtable}

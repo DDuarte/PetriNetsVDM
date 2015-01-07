@@ -1,0 +1,281 @@
+\begin{vdmpp}
+/**
+ * This class represents Petri nets with places, transitions
+ * and multiple types of arcs
+ */
+class PetriNet
+  instance variables
+    /**
+     * set of places (redundant, places are referenced from arcs)
+     */
+    public places : set of Place := {};
+
+    /**
+     * set of arcs (redundant, arcs are referenced from transitions)
+     */
+    public arcs : set of Arc := {};
+
+    /**
+     * set of transitions
+     */
+    public transitions : set of Transition := {};
+
+    /**
+     * state of the Petri net
+     * mapping of places to number of tokens
+     */
+    public marking: map Place to nat := {|->};
+
+    /**
+     * single starting place
+     */
+    public starts : Place;
+
+    /**
+     * multiple ending places
+     */
+    public finish : set of Place := {};
+
+    inv starts in set places;
+    inv finish subset places;
+    inv forall arc in set arcs & arc.place in set places;
+    inv dom marking subset places;
+    inv forall transition in set transitions & (
+     transition.inputArcs subset arcs and
+     transition.outputArcs subset arcs
+    );
+
+  operations
+    /**
+     * PetriNet constructor.
+     *
+     * @param p set of places
+     * @param s start place
+     * @param f set of finish places
+     * @param a set of arcs
+     * @param m initial marking (mapping of places to number of tokens)
+     * @param t set of transitions
+     */
+(*@
+\label{PetriNet:57}
+@*)
+    public PetriNet: set of Place * Place * set of Place * set of Arc *
+                     map Place to nat * set of Transition ==> PetriNet
+    PetriNet(p, s, f, a, m, t) == (
+      atomic(
+        places := p;
+        starts := s;
+        finish := f;
+        arcs := a;
+        marking := m;
+        transitions := t;
+      )
+      return self;
+    )
+    pre dom m = p and
+      s in set p and
+      f subset p and
+      forall a1 in set a & a1.place in set p and
+      forall t1 in set t & (
+       forall a2 in set t1.inputArcs & a2 in set a and
+       forall a3 in set t1.outputArcs & a3 in set a
+      );
+
+    /**
+     * Triggers given transition and returns the new state of the Petri net.
+     *
+     * @remark The internal state of the Petri net is not changed by this
+     *         method. For that intention, use executeStep instead.
+     *
+     * @param t transition to be triggered
+     * @param m marking (mapping of places to number of tokens)
+     * @return  new marking representing the new state of the Petri net.
+     *          It may or may not have been modified, depending if
+     *          the transition was actually triggered (i.e all conditions
+     *          at the arcs have been met).
+     */
+(*@
+\label{trigger:90}
+@*)
+    private trigger: Transition * map Place to nat ==> map Place to nat
+    trigger(t, m) == (
+      dcl newMarking: map Place to nat := m;
+
+      for all arc in set t.inputArcs do (
+        if not arc.isEnabled(newMarking) then
+          return m;
+        newMarking := arc.trigger(t, newMarking);
+      );
+
+      for all arc in set t.outputArcs do (
+        if not arc.isEnabled(newMarking) then
+          return m;
+        newMarking := arc.trigger(t, newMarking);
+      );
+
+      return newMarking;
+    )
+    pre t in set transitions and dom m subset places
+    post dom RESULT subset places;
+
+    /**
+     * Triggers given transition and changes marking accordingly.
+     *
+     * @see trigger(t, m)
+     *
+     * @param t transition to be triggered
+     * @return  nothing
+     */
+(*@
+\label{executeStep:119}
+@*)
+    public executeStep: Transition ==> ()
+    executeStep(t) == (
+      marking := trigger(t, marking);
+    )
+    pre t in set transitions;
+
+    /**
+     * Verifies if a given marking is reachable from current state.
+     *
+     * Reachability definition (@wikipedia): "Given a computational
+     * (potentially infinite state) system with a set of allowed rules
+     * or transformations, decide whether a certain state of a system is
+     * reachable from a given initial state of the system."
+     *
+     * @remark The behaviour is undefined if the Petri net is cyclic
+     *
+     * @param targetMarking marking (mapping of places to number of tokens)
+     * @return boolean
+     */
+(*@
+\label{isReachable:138}
+@*)
+    public isReachable: map Place to nat ==> bool
+    isReachable(targetMarking) == (
+      dcl stack: DFSStack := new DFSStack();
+      dcl currentInputMarking: map Place to nat := marking;
+      dcl currentOutputMarking: map Place to nat := marking;
+      dcl previousMarkings: set of map Place to nat := {};
+
+      stack.push(new DFSElement(marking, new Transition("Start", { }, { })));
+
+      while not stack.empty() do (
+
+        currentInputMarking := stack.pop().marking;
+
+        for all transition in set transitions do (
+
+          currentOutputMarking := trigger(transition, currentInputMarking);
+
+          /* if target marking is found */
+          if (currentOutputMarking = targetMarking) then return true;
+
+          /* if marking is not already explored */
+          if (currentOutputMarking not in set previousMarkings) then (
+            stack.push(new DFSElement(currentOutputMarking, transition));
+            previousMarkings := previousMarkings union {currentOutputMarking};
+          )
+        );
+
+      );
+
+      return false;
+    )
+    pre dom targetMarking subset places;
+
+    /**
+     * Get all sequences of transitions from an initial marking and
+     * a target marking.
+     *
+     * @remark The behaviour is undefined if the Petri net is cyclic
+     *
+     * @param initialMarking initial marking (mapping of places to number of tokens)
+     * @param targetMarking final marking (mapping of places to number of tokens)
+     * @return set of seq of transitions
+     */
+(*@
+\label{getAllSequences:181}
+@*)
+    public getAllSequences: map Place to nat * map Place to nat ==> set of seq of Transition
+    getAllSequences(initialMarking, targetMarking) == (
+      dcl stack: DFSStack := new DFSStack();
+      dcl currentDFSElement: DFSElement;
+      dcl currentInputMarking: map Place to nat := initialMarking;
+      dcl currentTransition: Transition;
+      dcl currentOutputMarking: map Place to nat := initialMarking;
+      dcl previousMarkings: set of map Place to nat := {};
+      dcl transitionSeqs: set of seq of Transition := {};
+      dcl sequencePath: seq of Transition := [];
+      dcl newMarkingsGenerated: bool := false;
+      dcl dummyTransition: Transition := new Transition("Start", { }, { });
+
+      stack.push(new DFSElement(initialMarking, dummyTransition));
+
+      while not stack.empty() do (
+
+        currentDFSElement := stack.pop();
+        currentTransition := currentDFSElement.transition;
+        currentInputMarking := currentDFSElement.marking;
+
+        newMarkingsGenerated := false;
+
+        if (currentTransition <> dummyTransition) then
+          sequencePath := [currentTransition] ^ sequencePath;
+
+        for all transition in set transitions do (
+
+          currentOutputMarking := trigger(transition, currentInputMarking);
+
+          /* if target marking is found */
+          if (currentOutputMarking = targetMarking and
+           currentOutputMarking <> currentInputMarking and
+           currentOutputMarking not in set previousMarkings) then (
+            if (len sequencePath <> 0) then (
+              transitionSeqs := transitionSeqs union {sequencePath ^ [transition]};
+            );
+          );
+
+          /* if marking is not already explored */
+          if (currentOutputMarking not in set previousMarkings) then (
+            newMarkingsGenerated := true;
+            stack.push(new DFSElement(currentOutputMarking, transition));
+            previousMarkings := previousMarkings union {currentOutputMarking};
+          );
+
+          /* reached a dead end, remove sequence from path, a backtracking will occur */
+          if (not newMarkingsGenerated) then (
+            if (len sequencePath > 0) then
+              sequencePath := tl sequencePath;
+          );
+
+        );
+
+      );
+
+      return transitionSeqs;
+    )
+    pre dom initialMarking subset places and dom targetMarking subset places;
+
+end PetriNet
+\end{vdmpp}
+\bigskip
+\begin{longtable}{|l|r|r|r|}
+\hline
+Function or operation & Line & Coverage & Calls \\
+\hline
+\hline
+\hyperref[PetriNet:57]{PetriNet} & 57&100.0\% & 9 \\
+\hline
+\hyperref[executeStep:119]{executeStep} & 119&100.0\% & 20 \\
+\hline
+\hyperref[getAllSequences:181]{getAllSequences} & 181&100.0\% & 3 \\
+\hline
+\hyperref[isReachable:138]{isReachable} & 138&100.0\% & 18 \\
+\hline
+\hyperref[trigger:90]{trigger} & 90&100.0\% & 142 \\
+\hline
+\hline
+PetriNet.vdmpp & & 100.0\% & 192 \\
+\hline
+\end{longtable}
